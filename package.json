@@ -8,7 +8,8 @@
   "main": "src/app.ts",
   "scripts": {
     "ts": "tsc --pretty",
-    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "start": "ts-node src/app.ts"
   },
   "dependencies": {
     "@rnw-community/shared": "^1.1.0",
