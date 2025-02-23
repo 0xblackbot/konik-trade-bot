@@ -1,0 +1,12 @@
+{
+  "name": "konik-trade-backend",
+  "version": "1.0.0",
+  "description": "",
+  "repository": "https://github.com/0xblackbot/konik-trade-backend.git",
+  "author": "Andrii Ivaniv",
+  "license": "Apache-2.0",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
