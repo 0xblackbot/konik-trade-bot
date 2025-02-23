@@ -42,10 +42,7 @@ export const getJettonBalance = async (
         ownerAddress
     );
 
-    const walletDataResponse = await LITE_CLIENT.runMethod(
-        jettonWalletAddress,
-        'get_wallet_data'
-    );
-
-    return walletDataResponse.readBigNumber();
+    return LITE_CLIENT.runMethod(jettonWalletAddress, 'get_wallet_data')
+        .then(response => response.readBigNumber())
+        .catch(() => 0n);
 };

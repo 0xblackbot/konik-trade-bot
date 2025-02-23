@@ -8,6 +8,7 @@ import {getAsset} from '../utils/api.utils';
 import {fromNano} from '../utils/balance.utils';
 import {formatOutputNumber} from '../utils/format.utils';
 import {getJettonBalance} from '../utils/jetton.utils';
+import {getWallet} from '../utils/wallet.utils';
 
 export const sendTokenPage = async (message: Message) =>
     sendTokenPageInfo(message).catch(() =>
@@ -36,14 +37,13 @@ const sendTokenPageInfo = async (message: Message) => {
         throw new Error(`Asset not found ${tokenAddress}`);
     }
 
+    const wallet = await getWallet(message.chat.id);
+
     await LITE_CLIENT.updateLastBlock();
-    const walletAddress = Address.parse(
-        'UQCIOI01FJKvUHqUNF-c1BGytouH5HdeOPHCgyk2ddK1Y8oZ'
-    );
 
     const [tonBalance, assetBalance] = await Promise.all([
-        LITE_CLIENT.getBalance(walletAddress),
-        getJettonBalance(asset.address, walletAddress)
+        LITE_CLIENT.getBalance(wallet.address),
+        getJettonBalance(asset.address, wallet.address)
     ]);
 
     const displayData = {
