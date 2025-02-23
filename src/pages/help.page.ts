@@ -1,8 +1,8 @@
 import {ButtonType} from '../enums/button-type.enum';
 import {BOT} from '../globals';
 
-export const sendHelpPage = async (chatId: number) => {
-    await BOT.sendMessage(
+export const sendHelpPage = (chatId: number) =>
+    BOT.sendMessage(
         chatId,
         '*Help:*\n' +
             '\n' +
@@ -16,7 +16,7 @@ export const sendHelpPage = async (chatId: number) => {
             'Net Profit is calculated after deducting all costs, including Price Impact, Transfer Tax, DEX Fees, and the Konik bot fee. This ensures you see the actual amount received after all deductions.\n' +
             '\n' +
             '*Need more help?*\n' +
-            `Join our Telegram chat: @konik\\_trade\\_chat`,
+            'Join our Telegram chat: @konik\\_trade\\_chat',
         {
             parse_mode: 'Markdown',
             reply_markup: {
@@ -26,4 +26,3 @@ export const sendHelpPage = async (chatId: number) => {
             }
         }
     );
-};

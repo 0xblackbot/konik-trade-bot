@@ -11,7 +11,13 @@
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "node-telegram-bot-api": "^0.66.0"
+    "@rnw-community/shared": "^1.1.0",
+    "@ton/core": "^0.60.1",
+    "@ton/crypto": "^3.3.0",
+    "ioredis": "^5.5.0",
+    "node-telegram-bot-api": "^0.66.0",
+    "rainbow-swap-sdk": "^1.5.3",
+    "ton-lite-client": "^3.0.0"
   },
   "devDependencies": {
     "@types/node-telegram-bot-api": "^0.64.7",
