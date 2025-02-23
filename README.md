@@ -1,6 +1,7 @@
 # Konik Trade Bot
 
-An open source repository for Konik Trade Bot maintained by [Blackbot](https://blackbot.technology/). Konik Trade Bot - the fastest and most secure way to trade any token on TON.
+An open source repository for Konik Trade Bot maintained by [Blackbot](https://blackbot.technology/).  
+Konik Trade Bot - the fastest and most secure way to trade any token on TON.
 
 ![main_banner.png](docs/assets/main_banner.png)
 
