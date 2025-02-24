@@ -126,12 +126,10 @@ const homePageOptions = {
                 {
                     text: 'Settings',
                     callback_data: CallbackDataType.Settings
-                }
+                },
+                {text: 'Help', callback_data: CallbackDataType.Help}
             ],
-            [
-                {text: 'Help', callback_data: CallbackDataType.Help},
-                {text: 'Refresh', callback_data: CallbackDataType.RefreshHome}
-            ]
+            [{text: 'Refresh', callback_data: CallbackDataType.RefreshHome}]
         ]
     }
 };
