@@ -4,6 +4,7 @@ import {createMarketOrder} from './market.order';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {LITE_CLIENT} from '../../globals';
 import {send404Page} from '../../pages/404.page';
+import {sendEmptyAssetBalancePage} from '../../pages/empty-asset-balance.page';
 import {getAssetBalance} from '../../utils/asset.utils';
 import {getWallet} from '../../utils/wallet.utils';
 
@@ -27,6 +28,15 @@ export const createMarketSellOrder = async (
         uiState.selectedToken.data.address,
         wallet.address
     );
+
+    /** check balance */
+    if (inputAssetBalance === 0n) {
+        return sendEmptyAssetBalancePage(
+            chatId,
+            uiState.selectedToken.data.symbol,
+            wallet.address.toString()
+        );
+    }
 
     const percentBigInt = BigInt(
         Math.round(inputPercentAmount * PRECISION_FACTOR)
