@@ -18,7 +18,7 @@
     "@ton/ton": "^15.2.1",
     "ioredis": "^5.5.0",
     "node-telegram-bot-api": "^0.66.0",
-    "rainbow-swap-sdk": "^1.5.3",
+    "rainbow-swap-sdk": "^1.5.5",
     "ton-lite-client": "^3.0.0"
   },
   "devDependencies": {

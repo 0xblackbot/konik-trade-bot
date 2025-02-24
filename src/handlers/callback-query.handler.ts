@@ -8,7 +8,6 @@ import {sendMarketBuyAmountInputPage} from '../pages/input/market-buy-amount-inp
 import {toNano} from '../utils/balance.utils';
 
 export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
-    console.log(query);
     if (query.message) {
         if (query.data === CallbackDataType.Help) {
             return sendHelpPage(query.message.chat.id);

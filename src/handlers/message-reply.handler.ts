@@ -5,7 +5,6 @@ import {InputTypeEnum} from '../enums/input-type.enum';
 import {marketBuyAmountInputHandler} from '../pages/input/market-buy-amount-input.handler';
 
 export const messageReplyHandler: TelegramEvents['message'] = async message => {
-    console.log('reply', message);
     const uiState = await RedisUiStateService.getUiState(message.chat.id);
 
     if (

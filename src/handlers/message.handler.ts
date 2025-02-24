@@ -8,7 +8,6 @@ import {sendHomePage} from '../pages/home.page';
 import {sendTokenPage} from '../pages/token.page';
 
 export const messageHandler: TelegramEvents['message'] = async message => {
-    console.log('message', message);
     const command = message.text?.split(' ')[0];
 
     if (command === CommandEnum.Start || command === CommandEnum.Home) {
