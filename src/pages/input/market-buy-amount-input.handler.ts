@@ -26,7 +26,7 @@ export const marketBuyAmountInputHandler = async (
     const inputAssetBalance = await getAssetBalance(TON, wallet.address);
     const maxInputAmount = fromNano(inputAssetBalance, 9);
 
-    if (inputAmount < 0 || inputAmount > maxInputAmount) {
+    if (inputAmount <= 0 || inputAmount > maxInputAmount) {
         return sendErrorPage(
             chatId,
             `Number out of range (0 - ${formatOutputNumber(maxInputAmount)}). Press button and try again.`
