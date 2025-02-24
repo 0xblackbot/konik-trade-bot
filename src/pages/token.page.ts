@@ -113,6 +113,7 @@ const sendTokenPageInfo = async (message: Message) => {
         }
     );
 
+    /** save the last selected token to be able to create order */
     const uiState = await RedisUiStateService.getUiState(message.chat.id);
 
     if (isDefined(uiState)) {
