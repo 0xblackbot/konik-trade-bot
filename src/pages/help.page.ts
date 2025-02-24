@@ -1,4 +1,4 @@
-import {ButtonType} from '../enums/button-type.enum';
+import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {BOT} from '../globals';
 
 export const sendHelpPage = (chatId: number) =>
@@ -21,7 +21,7 @@ export const sendHelpPage = (chatId: number) =>
             parse_mode: 'Markdown',
             reply_markup: {
                 inline_keyboard: [
-                    [{text: 'Close', callback_data: ButtonType.Close}]
+                    [{text: 'Close', callback_data: CallbackDataType.Help}]
                 ]
             }
         }

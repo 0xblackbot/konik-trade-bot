@@ -1,4 +1,4 @@
-import {ButtonType} from '../enums/button-type.enum';
+import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {BOT} from '../globals';
 
 export const sendWelcomePage = (chatId: number, walletAddress: string) =>
@@ -20,21 +20,26 @@ export const sendWelcomePage = (chatId: number, walletAddress: string) =>
                     [
                         {
                             text: 'Buy & Sell',
-                            callback_data: ButtonType.BuyAndSell
+                            callback_data: CallbackDataType.BuyAndSell
                         }
                     ],
                     [
                         {
                             text: 'DCA Orders',
-                            callback_data: ButtonType.DCAOrders
+                            callback_data: CallbackDataType.DCAOrders
                         },
                         {
                             text: 'Limit Orders',
-                            callback_data: ButtonType.LimitOrders
+                            callback_data: CallbackDataType.LimitOrders
                         }
                     ],
-                    [{text: 'Settings', callback_data: ButtonType.Settings}],
-                    [{text: 'Help', callback_data: ButtonType.Help}]
+                    [
+                        {
+                            text: 'Settings',
+                            callback_data: CallbackDataType.Settings
+                        }
+                    ],
+                    [{text: 'Help', callback_data: CallbackDataType.Help}]
                 ]
             }
         }
