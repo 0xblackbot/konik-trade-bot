@@ -6,6 +6,7 @@ export enum CallbackDataType {
     ExportSeedPhrase = 'ExportSeedPhrase',
     ChangeMaxSlippage = 'ChangeMaxSlippage',
     Help = 'Help',
+    RefreshHome = 'RefreshHome',
     Close = 'Close',
 
     MarketBuy_10 = 'MarketBuy_10',

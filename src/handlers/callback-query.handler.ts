@@ -5,6 +5,7 @@ import {BOT} from '../globals';
 import {createMarketBuyOrder} from '../orders/market/market-buy.order';
 import {sendBuySellPage} from '../pages/buy-n-sell.page';
 import {sendHelpPage} from '../pages/help.page';
+import {updateHomePage} from '../pages/home.page';
 import {sendMarketBuyAmountInputPage} from '../pages/input/market-buy-amount-input.page';
 import {sendSeepPhraseWarning} from '../pages/seed-phrase-warning.page';
 import {sendSettingsPage} from '../pages/settings.page';
@@ -56,6 +57,13 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
 
         if (query.data === CallbackDataType.MarketBuy_X) {
             return sendMarketBuyAmountInputPage(query.message.chat.id);
+        }
+
+        if (query.data === CallbackDataType.RefreshHome) {
+            return updateHomePage(
+                query.message.chat.id,
+                query.message.message_id
+            );
         }
     }
 };

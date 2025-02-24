@@ -1,5 +1,3 @@
-import {Asset} from 'rainbow-swap-sdk';
-
 import {RedisUserAssetsService} from '../classes/redis-user-assets.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {BOT, LITE_CLIENT, TON} from '../globals';
@@ -9,10 +7,26 @@ import {fromNano} from '../utils/balance.utils';
 import {formatOutputNumber} from '../utils/format.utils';
 import {getWallet} from '../utils/wallet.utils';
 
-export const sendHomePage = async (chatId: number) => {
+export const updateHomePage = async (chatId: number, messageId: number) => {
+    BOT.editMessageText(await getHomePageMessageText(chatId), {
+        chat_id: chatId,
+        message_id: messageId,
+        ...homePageOptions
+    }).catch(error => console.log('BOT.editMessageText error', error));
+};
+
+export const sendHomePage = async (chatId: number) =>
+    BOT.sendMessage(
+        chatId,
+        await getHomePageMessageText(chatId),
+        homePageOptions
+    );
+
+const getHomePageMessageText = async (chatId: number) => {
     await LITE_CLIENT.updateLastBlock();
 
     const wallet = await getWallet(chatId);
+    const walletAddress = wallet.address.toString();
 
     const assetAddresses = await RedisUserAssetsService.getUserAssets(chatId);
     const userAssets = [TON, ...assetAddresses];
@@ -27,47 +41,6 @@ export const sendHomePage = async (chatId: number) => {
         )
     );
 
-    return BOT.sendMessage(
-        chatId,
-        getMessageText(assetsBalances, assetsInfos, wallet.address.toString()),
-        {
-            parse_mode: 'HTML',
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        {
-                            text: 'Buy & Sell',
-                            callback_data: CallbackDataType.BuyAndSell
-                        }
-                    ],
-                    [
-                        {
-                            text: 'DCA Orders',
-                            callback_data: CallbackDataType.DCAOrders
-                        },
-                        {
-                            text: 'Limit Orders',
-                            callback_data: CallbackDataType.LimitOrders
-                        }
-                    ],
-                    [
-                        {
-                            text: 'Settings',
-                            callback_data: CallbackDataType.Settings
-                        }
-                    ],
-                    [{text: 'Help', callback_data: CallbackDataType.Help}]
-                ]
-            }
-        }
-    );
-};
-
-const getMessageText = (
-    assetsBalances: bigint[],
-    assetsInfos: Asset[],
-    walletAddress: string
-) => {
     let tonBalance = 0;
     let usdTonBalance = 0;
     let tonNetWorth = 0;
@@ -127,4 +100,38 @@ const getMessageText = (
         'To buy a token, simply enter its address.\n' +
         'To manage your wallet or export your seed phrase, tap Settings below.'
     );
+};
+
+const homePageOptions = {
+    parse_mode: 'HTML' as const,
+    reply_markup: {
+        inline_keyboard: [
+            [
+                {
+                    text: 'Buy & Sell',
+                    callback_data: CallbackDataType.BuyAndSell
+                }
+            ],
+            [
+                {
+                    text: 'DCA Orders',
+                    callback_data: CallbackDataType.DCAOrders
+                },
+                {
+                    text: 'Limit Orders',
+                    callback_data: CallbackDataType.LimitOrders
+                }
+            ],
+            [
+                {
+                    text: 'Settings',
+                    callback_data: CallbackDataType.Settings
+                }
+            ],
+            [
+                {text: 'Help', callback_data: CallbackDataType.Help},
+                {text: 'Refresh', callback_data: CallbackDataType.RefreshHome}
+            ]
+        ]
+    }
 };
