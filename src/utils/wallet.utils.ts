@@ -5,7 +5,6 @@ import {mnemonicNew} from '@ton/crypto';
 import {RedisWalletService} from '../classes/redis-wallet.service';
 import {Wallet} from '../classes/wallet.class';
 import {LITE_CLIENT} from '../globals';
-import {sendWelcomePage} from '../pages/welcome.page';
 
 export const getSeqno = async (address: Address) =>
     LITE_CLIENT.runMethod(address, 'seqno')
@@ -20,10 +19,7 @@ export const getWallet = async (chatId: number) => {
         const newMnemonic = await mnemonicNew().then(array => array.join(' '));
         await RedisWalletService.setMnemonic(chatId, newMnemonic);
 
-        const wallet = await Wallet.initialize(newMnemonic);
-        await sendWelcomePage(chatId, wallet.address.toString());
-
-        return wallet;
+        return Wallet.initialize(newMnemonic);
     } else {
         return Wallet.initialize(mnemonic);
     }

@@ -27,16 +27,9 @@ export const sendHomePage = async (chatId: number) => {
         )
     );
 
-    const displayData = getDisplayData(assetsBalances, assetsInfos);
-
     return BOT.sendMessage(
         chatId,
-        `Your wallet: <code>${wallet.address.toString()}</code> (tap to copy)\n` +
-            '\n' +
-            `Balance: <b>${displayData.tonBalance} TON</b> / <b>$${displayData.usdTonBalance}</b>\n` +
-            `Net Worth: <b>${displayData.tonNetWorth} TON</b> / <b>$${displayData.usdNetWorth}</b> \n` +
-            '\n' +
-            displayData.tokensInfo,
+        getMessageText(assetsBalances, assetsInfos, wallet.address.toString()),
         {
             parse_mode: 'HTML',
             reply_markup: {
@@ -70,9 +63,13 @@ export const sendHomePage = async (chatId: number) => {
     );
 };
 
-const getDisplayData = (assetsBalances: bigint[], assetsInfos: Asset[]) => {
-    let tonBalance = formatOutputNumber(0);
-    let usdTonBalance = formatOutputNumber(0);
+const getMessageText = (
+    assetsBalances: bigint[],
+    assetsInfos: Asset[],
+    walletAddress: string
+) => {
+    let tonBalance = 0;
+    let usdTonBalance = 0;
     let tonNetWorth = 0;
     let usdNetWorth = 0;
     const tokensInfo: string[] = [];
@@ -95,8 +92,8 @@ const getDisplayData = (assetsBalances: bigint[], assetsInfos: Asset[]) => {
         usdNetWorth += usdValue;
 
         if (info.address === 'ton') {
-            tonBalance = formatOutputNumber(balance);
-            usdTonBalance = formatOutputNumber(usdValue);
+            tonBalance = balance;
+            usdTonBalance = usdValue;
         } else {
             tokensInfo.push(
                 ` - <b>${info.symbol}</b>\n` +
@@ -105,14 +102,29 @@ const getDisplayData = (assetsBalances: bigint[], assetsInfos: Asset[]) => {
         }
     }
 
-    return {
-        tonBalance,
-        usdTonBalance,
-        tonNetWorth: formatOutputNumber(tonNetWorth),
-        usdNetWorth: formatOutputNumber(usdNetWorth),
-        tokensInfo:
-            tokensInfo.length === 0
-                ? 'Your tokens will be available here.'
-                : 'Your tokens:\n' + tokensInfo.join('\n')
-    };
+    const firstPart =
+        tonBalance === 0
+            ? '<b>Welcome to Konik Trade Bot</b> – the fastest and most secure way to trade any token on TON!\n' +
+              '\n' +
+              'You currently have no TON in your wallet. To start trading, deposit TON to your wallet address:\n' +
+              `<code>${walletAddress}</code> (tap to copy)\n` +
+              '\n' +
+              'Once done, tap refresh and your balance will appear here.\n'
+            : `Your wallet: <code>${walletAddress}</code> (tap to copy)\n` +
+              '\n' +
+              `Balance: <b>${formatOutputNumber(tonBalance)} TON</b> / <b>$${formatOutputNumber(usdTonBalance)}</b>\n` +
+              `Net Worth: <b>${formatOutputNumber(tonNetWorth)} TON</b> / <b>$${formatOutputNumber(usdNetWorth)}</b> \n`;
+
+    const secondPart =
+        tokensInfo.length === 0
+            ? ''
+            : 'Your tokens:\n' + tokensInfo.join('\n') + '\n';
+
+    return (
+        firstPart +
+        '\n' +
+        secondPart +
+        'To buy a token, simply enter its address.\n' +
+        'To manage your wallet or export your seed phrase, tap Settings below.'
+    );
 };
