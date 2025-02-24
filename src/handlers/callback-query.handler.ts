@@ -2,9 +2,9 @@ import {TelegramEvents} from 'node-telegram-bot-api';
 
 import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {BOT} from '../globals';
-import {marketBuyHandler} from '../orders/market/market-buy.handler';
+import {createMarketBuyOrder} from '../orders/market/market-buy.order';
 import {sendHelpPage} from '../pages/help.page';
-import {sendMarketBuyAmountInput} from '../pages/input/market-buy-amount-input';
+import {sendMarketBuyAmountInputPage} from '../pages/input/market-buy-amount-input.page';
 import {toNano} from '../utils/balance.utils';
 
 export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
@@ -22,15 +22,18 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
         }
 
         if (query.data === CallbackDataType.MarketBuy_10) {
-            return marketBuyHandler(query.message.chat.id, toNano('10', 9));
+            return createMarketBuyOrder(query.message.chat.id, toNano('10', 9));
         }
 
         if (query.data === CallbackDataType.MarketBuy_100) {
-            return marketBuyHandler(query.message.chat.id, toNano('100', 9));
+            return createMarketBuyOrder(
+                query.message.chat.id,
+                toNano('100', 9)
+            );
         }
 
         if (query.data === CallbackDataType.MarketBuy_X) {
-            return sendMarketBuyAmountInput(query.message.chat.id);
+            return sendMarketBuyAmountInputPage(query.message.chat.id);
         }
     }
 };

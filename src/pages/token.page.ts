@@ -5,29 +5,22 @@ import {Asset} from 'rainbow-swap-sdk';
 
 import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {BOT, LITE_CLIENT} from '../globals';
+import {BOT, LITE_CLIENT, TON} from '../globals';
+import {sendErrorPage} from './error.page';
 import {getAsset} from '../utils/api.utils';
+import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
 import {formatOutputNumber} from '../utils/format.utils';
-import {getJettonBalance} from '../utils/jetton.utils';
 import {getWallet} from '../utils/wallet.utils';
 
 export const sendTokenPage = async (message: Message) =>
     sendTokenPageInfo(message).catch(error => {
         console.log('error while sendTokenPageInfo', error);
 
-        return BOT.sendMessage(
+        return sendErrorPage(
             message.chat.id,
-            `Token not found. Make sure address *(${message.text})* is correct.\n` +
-                'If you are trying to enter a buy or sell amount, ensure you click and reply to the message.',
-            {
-                parse_mode: 'Markdown',
-                reply_markup: {
-                    inline_keyboard: [
-                        [{text: 'Close', callback_data: CallbackDataType.Close}]
-                    ]
-                }
-            }
+            `Token not found. Make sure address <b>(${message.text})</b> is correct.\n` +
+                'If you are trying to enter a buy or sell amount, ensure you click and reply to the message.'
         );
     });
 
@@ -46,8 +39,8 @@ const sendTokenPageInfo = async (message: Message) => {
     await LITE_CLIENT.updateLastBlock();
 
     const [tonBalance, assetBalance] = await Promise.all([
-        LITE_CLIENT.getBalance(wallet.address),
-        getJettonBalance(asset.address, wallet.address)
+        getAssetBalance(TON, wallet.address),
+        getAssetBalance(asset.address, wallet.address)
     ]);
 
     const displayData = {
@@ -134,7 +127,7 @@ const sendTokenPageInfo = async (message: Message) => {
     await RedisUiStateService.setUiState(message.chat.id, {
         ...uiState,
         selectedToken: {
-            address: asset.address,
+            data: asset,
             messageId: newMessage.message_id
         },
         inputRequest: undefined
@@ -152,7 +145,11 @@ const getPricesDisplayData = (asset: Asset) => {
     const assetToTonExchangeRate = 1 / tonToAssetExchangeRate;
 
     return (
-        `  1 ${asset.symbol} = $${formatOutputNumber(assetToUsdExchangeRate)} / $1 = ${formatOutputNumber(usdToAssetExchangeRate)} ${asset.symbol}\n` +
-        `  1 ${asset.symbol} = ${formatOutputNumber(assetToTonExchangeRate)} TON / 1 TON = ${formatOutputNumber(tonToAssetExchangeRate)} ${asset.symbol}`
+        `  1 ${asset.symbol} = $${formatOutputNumber(assetToUsdExchangeRate)} / $1 = ${formatOutputNumber(
+            usdToAssetExchangeRate
+        )} ${asset.symbol}\n` +
+        `  1 ${asset.symbol} = ${formatOutputNumber(assetToTonExchangeRate)} TON / 1 TON = ${formatOutputNumber(
+            tonToAssetExchangeRate
+        )} ${asset.symbol}`
     );
 };

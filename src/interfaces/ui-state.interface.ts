@@ -1,8 +1,10 @@
+import {Asset} from 'rainbow-swap-sdk';
+
 import {InputTypeEnum} from '../enums/input-type.enum';
 
 export interface UiState {
     selectedToken?: {
-        address: string;
+        data: Asset;
         messageId: number; // Token page id
     };
     inputRequest?: {

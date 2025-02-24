@@ -7,17 +7,24 @@ import {TELEGRAM_BOT_API_TOKEN} from './secrets';
 
 const bot = new TelegramBot(TELEGRAM_BOT_API_TOKEN, {polling: true});
 
-bot.on('message', (message, metadata) => {
+bot.on('message', async (message, metadata) => {
     try {
         if (message.chat.type === 'private') {
             if (message.reply_to_message) {
-                return messageReplyHandler(message, metadata);
+                await messageReplyHandler(message, metadata);
+            } else {
+                await messageHandler(message, metadata);
             }
-
-            return messageHandler(message, metadata);
         }
     } catch (error) {
         console.log('Error while handling message', message, error);
     }
 });
-bot.on('callback_query', callbackQueryHandler);
+
+bot.on('callback_query', async query => {
+    try {
+        await callbackQueryHandler(query);
+    } catch (error) {
+        console.log('Error while handling callback_query', query, error);
+    }
+});
