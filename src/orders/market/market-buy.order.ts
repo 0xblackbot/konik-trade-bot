@@ -96,6 +96,7 @@ export const createMarketBuyOrder = async (
         bocHash,
         chatId,
         messageId: newMessage.message_id,
-        expectedMessageCount: bestRoute.messageCount
+        expectedMessageCount: bestRoute.messageCount,
+        assetAddress: uiState.selectedToken.data.address
     });
 };

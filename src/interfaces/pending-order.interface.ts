@@ -3,4 +3,5 @@ export interface PendingOrder {
     chatId: number;
     messageId: number;
     expectedMessageCount: number;
+    assetAddress: string;
 }

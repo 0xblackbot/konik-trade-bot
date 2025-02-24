@@ -1,6 +1,7 @@
 import {getSwapHistoryData, SwapStatusEnum} from 'rainbow-swap-sdk';
 
 import {RedisOrderHistoryService} from './classes/redis-orders-history.service';
+import {RedisUserAssetsService} from './classes/redis-user-assets.service';
 import {BOT} from './globals';
 import {getOrderPageText} from './pages/order.page';
 import {sleep} from './utils/promise.utils';
@@ -39,6 +40,11 @@ const app = async () => {
                 if (historyData.status !== SwapStatusEnum.Pending) {
                     await RedisOrderHistoryService.deletePendingOrder(
                         pendingOrder
+                    );
+
+                    await RedisUserAssetsService.addUserAsset(
+                        pendingOrder.chatId,
+                        pendingOrder.assetAddress
                     );
                 }
             })

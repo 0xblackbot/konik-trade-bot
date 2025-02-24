@@ -16,6 +16,7 @@
     "@ton/core": "^0.60.1",
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.2.1",
+    "axios": "^1.7.9",
     "ioredis": "^5.5.0",
     "node-telegram-bot-api": "^0.66.0",
     "rainbow-swap-sdk": "^1.5.5",
