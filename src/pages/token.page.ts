@@ -116,10 +116,18 @@ const sendTokenPageInfo = async (message: Message) => {
     /** save the last selected token to be able to create order */
     const uiState = await RedisUiStateService.getUiState(message.chat.id);
 
-    if (isDefined(uiState)) {
+    if (isDefined(uiState?.selectedToken)) {
         await BOT.deleteMessage(
             message.chat.id,
             uiState.selectedToken.messageId
+        ).catch(error => console.log('BOT.deleteMessage error', error));
+    }
+
+    /** reset input request */
+    if (isDefined(uiState?.inputRequest)) {
+        await BOT.deleteMessage(
+            message.chat.id,
+            uiState.inputRequest.messageId
         ).catch(error => console.log('BOT.deleteMessage error', error));
     }
 
@@ -128,7 +136,8 @@ const sendTokenPageInfo = async (message: Message) => {
         selectedToken: {
             address: asset.address,
             messageId: newMessage.message_id
-        }
+        },
+        inputRequest: undefined
     });
 };
 
