@@ -16,18 +16,24 @@ export const messageHandler: TelegramEvents['message'] = async message => {
 
             if (command === CommandEnum.Start || command === CommandEnum.Home) {
                 return sendHomePage(chatId);
-            } else if (command === CommandEnum.Help) {
+            }
+
+            if (command === CommandEnum.Help) {
                 return sendHelpPage(chatId);
-            } else if (command === CommandEnum.Chat) {
+            }
+
+            if (command === CommandEnum.Chat) {
                 return sendChatPage(chatId);
-            } else if (command?.startsWith('/')) {
+            }
+
+            if (command?.startsWith('/')) {
                 return BOT.sendMessage(
                     chatId,
                     'I do not understand this, yet...\n' + 'Try /start command.'
                 );
-            } else {
-                return sendTokenPage(message);
             }
+
+            return sendTokenPage(message);
         }
     } catch (error) {
         console.log('Error while handling message', message, error);

@@ -1,3 +1,4 @@
+import {isDefined} from '@rnw-community/shared';
 import {
     Address,
     beginCell,
@@ -5,6 +6,7 @@ import {
     internal,
     OutActionSendMsg,
     SendMode,
+    StateInit,
     storeMessage
 } from '@ton/core';
 import {KeyPair, mnemonicToPrivateKey} from '@ton/crypto';
@@ -15,10 +17,10 @@ import {
     WalletIdV5R1ClientContext
 } from '@ton/ton/dist/wallets/v5r1/WalletV5R1WalletId';
 import {storeWalletIdV5R1} from '@ton/ton/dist/wallets/WalletContractV5R1';
+import {Message} from 'rainbow-swap-sdk';
 
 import {LITE_CLIENT} from '../globals';
-import {TransferParams} from '../interfaces/transfer-params.interface';
-import {bocToHash} from '../utils/boc.utils';
+import {bocToCell, bocToHash} from '../utils/boc.utils';
 import {getSeqno} from '../utils/wallet.utils';
 
 const WORKCHAIN = 0;
@@ -35,9 +37,11 @@ const WALLET_V5_ID: WalletIdV5R1<WalletIdV5R1ClientContext> = {
 export class Wallet {
     public address: Address;
     private keyPair: KeyPair;
+    private stateInit: StateInit;
 
-    constructor(address: Address, keyPair: KeyPair) {
+    constructor(address: Address, stateInit: StateInit, keyPair: KeyPair) {
         this.address = address;
+        this.stateInit = stateInit;
         this.keyPair = keyPair;
     }
 
@@ -49,22 +53,24 @@ export class Wallet {
             publicKey: keyPair.publicKey
         });
 
-        return new Wallet(walletContract.address, keyPair);
+        return new Wallet(walletContract.address, walletContract.init, keyPair);
     };
 
     public createTransferBoc = async (
-        transferParams: TransferParams[],
+        messages: Message[],
         sendMode: SendMode = SendMode.PAY_GAS_SEPARATELY
     ) => {
         const seqno = await getSeqno(this.address);
 
-        const messagesRelaxed = transferParams.map(transferParam =>
+        const messagesRelaxed = messages.map(message =>
             internal({
-                to: transferParam.to,
-                value: transferParam.value,
+                to: message.address,
+                value: BigInt(message.amount),
                 bounce: true,
-                init: transferParam.init,
-                body: transferParam.body
+                init: undefined, // TODO: check this
+                body: isDefined(message.payload)
+                    ? bocToCell(message.payload)
+                    : undefined
             })
         );
 
@@ -83,7 +89,8 @@ export class Wallet {
 
         const externalMessage = external({
             to: this.address,
-            body: transferCell
+            body: transferCell,
+            init: seqno === 0 ? this.stateInit : undefined
         });
 
         return beginCell()

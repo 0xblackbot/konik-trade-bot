@@ -120,7 +120,7 @@ const sendTokenPageInfo = async (message: Message) => {
         await BOT.deleteMessage(
             message.chat.id,
             uiState.selectedToken.messageId
-        );
+        ).catch(error => console.log('BOT.deleteMessage error', error));
     }
 
     await RedisUiStateService.setUiState(message.chat.id, {
