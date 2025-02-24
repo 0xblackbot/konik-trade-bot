@@ -21,7 +21,7 @@ Konik Trade Bot - the fastest and most secure way to trade any token on TON.
 
 1. Clone repository
 ```
-git clone https://github.com/0xblackbot/konik-trade-backend.git && cd konik-trade-backend
+git clone https://github.com/0xblackbot/konik-trade-bot.git && cd konik-trade-bot
 ```
 
 2. Install dependencies

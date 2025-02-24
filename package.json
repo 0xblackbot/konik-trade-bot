@@ -1,8 +1,8 @@
 {
-  "name": "konik-trade-backend",
+  "name": "konik-trade-bot",
   "version": "1.0.0",
   "description": "",
-  "repository": "https://github.com/0xblackbot/konik-trade-backend.git",
+  "repository": "https://github.com/0xblackbot/konik-trade-bot.git",
   "author": "Andrii Ivaniv",
   "license": "Apache-2.0",
   "main": "src/app.ts",
