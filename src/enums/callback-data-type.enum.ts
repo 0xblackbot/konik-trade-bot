@@ -3,6 +3,8 @@ export enum CallbackDataType {
     DCAOrders = 'DCAOrders',
     LimitOrders = 'LimitOrders',
     Settings = 'Settings',
+    ExportSeedPhrase = 'ExportSeedPhrase',
+    ChangeMaxSlippage = 'ChangeMaxSlippage',
     Help = 'Help',
     Close = 'Close',
 
