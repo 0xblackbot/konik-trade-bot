@@ -4,6 +4,7 @@ import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../enums/input-type.enum';
 import {marketBuyAmountInputHandler} from '../pages/input/market-buy-amount-input.handler';
 import {marketSellPercentInputHandler} from '../pages/input/market-sell-percent-input.handler';
+import {maxSlippageInputHandler} from '../pages/input/max-slippage-input.handler';
 
 export const messageReplyHandler: TelegramEvents['message'] = async message => {
     const uiState = await RedisUiStateService.getUiState(message.chat.id);
@@ -26,6 +27,10 @@ export const messageReplyHandler: TelegramEvents['message'] = async message => {
 
         if (uiState.inputRequest.type === InputTypeEnum.MarketSellPercent) {
             return marketSellPercentInputHandler(message.chat.id, messageText);
+        }
+
+        if (uiState.inputRequest.type === InputTypeEnum.MaxSlippage) {
+            return maxSlippageInputHandler(message.chat.id, messageText);
         }
     }
 };

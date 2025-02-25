@@ -1,4 +1,5 @@
 export enum InputTypeEnum {
     MarketBuyAmount = 'MarketBuyAmount',
-    MarketSellPercent = 'MarketSellPercent'
+    MarketSellPercent = 'MarketSellPercent',
+    MaxSlippage = 'MaxSlippage'
 }

@@ -9,6 +9,7 @@ import {sendHelpPage} from '../pages/help.page';
 import {updateHomePage} from '../pages/home.page';
 import {sendMarketBuyAmountInputPage} from '../pages/input/market-buy-amount-input.page';
 import {sendMarketSellPercentInputPage} from '../pages/input/market-sell-percent-input.page';
+import {sendMaxSlippageInputPage} from '../pages/input/max-slippage-input.page';
 import {sendSeepPhraseWarning} from '../pages/seed-phrase-warning.page';
 import {sendSettingsPage} from '../pages/settings.page';
 import {sendUnavailablePage} from '../pages/unavailable.page';
@@ -78,6 +79,10 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
                 query.message.chat.id,
                 query.message.message_id
             );
+        }
+
+        if (query.data === CallbackDataType.ChangeMaxSlippage) {
+            return sendMaxSlippageInputPage(query.message.chat.id);
         }
     }
 };

@@ -3,8 +3,8 @@ import {isDefined} from '@rnw-community/shared';
 import {REDIS_CLIENT} from '../globals';
 import {Settings} from '../interfaces/settings.interface';
 
-const DEFAULT_SETTINGS: Settings = {
-    maxSlippage: 5
+export const DEFAULT_SETTINGS: Settings = {
+    maxSlippage: 10
 };
 
 export abstract class RedisSettingsService {
