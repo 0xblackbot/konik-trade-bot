@@ -4,6 +4,7 @@ import {getBestRoute, SwapStatusEnum} from 'rainbow-swap-sdk';
 import {RedisOrderHistoryService} from '../../classes/redis-orders-history.service';
 import {RedisSettingsService} from '../../classes/redis-settings.service';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
+import {OrderSide} from '../../enums/order-side.enum';
 import {BOT, LITE_CLIENT, TON} from '../../globals';
 import {send404Page} from '../../pages/404.page';
 import {sendErrorPage} from '../../pages/error.page';
@@ -17,7 +18,7 @@ import {getWallet} from '../../utils/wallet.utils';
 
 export const createMarketOrder = async (
     chatId: number,
-    side: 'buy' | 'sell',
+    side: OrderSide,
     inputAssetAmount: bigint
 ) => {
     await LITE_CLIENT.updateLastBlock();
@@ -43,7 +44,7 @@ export const createMarketOrder = async (
     };
 
     const [inputAsset, outputAsset] =
-        side === 'buy' ? [aAsset, bAsset] : [bAsset, aAsset];
+        side === OrderSide.Buy ? [aAsset, bAsset] : [bAsset, aAsset];
 
     /** check input balance */
     const inputAssetBalance = await getAssetBalance(

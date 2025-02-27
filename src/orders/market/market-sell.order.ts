@@ -2,6 +2,7 @@ import {isDefined} from '@rnw-community/shared';
 
 import {createMarketOrder} from './market.order';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
+import {OrderSide} from '../../enums/order-side.enum';
 import {LITE_CLIENT} from '../../globals';
 import {send404Page} from '../../pages/404.page';
 import {sendEmptyAssetBalancePage} from '../../pages/empty-asset-balance.page';
@@ -45,5 +46,5 @@ export const createMarketSellOrder = async (
     const inputAssetAmount =
         (inputAssetBalance * percentBigInt) / BigInt(100 * PRECISION_FACTOR);
 
-    return createMarketOrder(chatId, 'sell', inputAssetAmount);
+    return createMarketOrder(chatId, OrderSide.Sell, inputAssetAmount);
 };
