@@ -1,8 +1,8 @@
 import {LITE_CLIENT} from '../../globals';
-import {createMarketSellOrder} from '../../orders/market/market-sell.order';
+import {processOrderSellPercentAmount} from '../../orders/utils/sell-percent-input.utils';
 import {sendErrorPage} from '../error.page';
 
-export const marketSellPercentInputHandler = async (
+export const sellPercentInputHandler = async (
     chatId: number,
     messageText: string
 ) => {
@@ -24,5 +24,5 @@ export const marketSellPercentInputHandler = async (
         );
     }
 
-    return createMarketSellOrder(chatId, inputAmount);
+    return processOrderSellPercentAmount(chatId, inputAmount);
 };

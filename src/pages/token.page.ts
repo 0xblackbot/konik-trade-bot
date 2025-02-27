@@ -1,10 +1,10 @@
-import {isDefined} from '@rnw-community/shared';
 import {Address} from '@ton/core';
 import {Message} from 'node-telegram-bot-api';
 import {Asset} from 'rainbow-swap-sdk';
 
 import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
+import {OrderType} from '../enums/order-type.enum';
 import {BOT, LITE_CLIENT, TON} from '../globals';
 import {sendErrorPage} from './error.page';
 import {getAsset} from '../utils/api.utils';
@@ -74,31 +74,31 @@ const sendTokenPageInfo = async (message: Message) => {
                     [
                         {
                             text: 'Buy 10 TON',
-                            callback_data: CallbackDataType.MarketBuy_10
+                            callback_data: CallbackDataType.Buy_10
                         },
                         {
                             text: 'Sell 50%',
-                            callback_data: CallbackDataType.MarketSell_50
+                            callback_data: CallbackDataType.Sell_50
                         }
                     ],
                     [
                         {
                             text: 'Buy 100 TON',
-                            callback_data: CallbackDataType.MarketBuy_100
+                            callback_data: CallbackDataType.Buy_100
                         },
                         {
                             text: 'Sell 100%',
-                            callback_data: CallbackDataType.MarketSell_100
+                            callback_data: CallbackDataType.Sell_100
                         }
                     ],
                     [
                         {
                             text: 'Buy X TON',
-                            callback_data: CallbackDataType.MarketBuy_X
+                            callback_data: CallbackDataType.Buy_X
                         },
                         {
                             text: 'Sell X %',
-                            callback_data: CallbackDataType.MarketSell_X
+                            callback_data: CallbackDataType.Sell_X
                         }
                     ],
                     [
@@ -116,31 +116,25 @@ const sendTokenPageInfo = async (message: Message) => {
     /** save the last selected token to be able to create order */
     const uiState = await RedisUiStateService.getUiState(message.chat.id);
 
-    if (isDefined(uiState?.selectedToken)) {
-        await Promise.all([
-            deleteMessageSafe(
-                message.chat.id,
-                uiState.selectedToken.tokenPageMessageId
-            ),
-            deleteMessageSafe(
-                message.chat.id,
-                uiState.selectedToken.limitOrderPageMessageId
-            )
-        ]);
-    }
-
-    /** reset input request */
-    if (isDefined(uiState?.inputRequest)) {
-        await deleteMessageSafe(
+    /** clear previous input/token messages */
+    await Promise.all([
+        deleteMessageSafe(
             message.chat.id,
-            uiState.inputRequest.messageId
-        );
-    }
+            uiState?.selectedToken?.tokenPageMessageId
+        ),
+        deleteMessageSafe(
+            message.chat.id,
+            uiState?.selectedToken?.limitOrderPageMessageId
+        ),
+        deleteMessageSafe(message.chat.id, uiState?.inputRequest?.messageId)
+    ]);
 
+    /** update ui state */
     await RedisUiStateService.setUiState(message.chat.id, {
         ...uiState,
         selectedToken: {
             data: asset,
+            orderType: OrderType.Market,
             tokenPageMessageId: newMessage.message_id,
             limitOrderPageMessageId: undefined
         },

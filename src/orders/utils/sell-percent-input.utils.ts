@@ -1,19 +1,18 @@
 import {isDefined} from '@rnw-community/shared';
 
-import {createMarketOrder} from './market.order';
+import {processOrderInputAmount} from './order-input-amount.utils';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
 import {LITE_CLIENT} from '../../globals';
 import {send404Page} from '../../pages/404.page';
-import {sendEmptyAssetBalancePage} from '../../pages/empty-asset-balance.page';
 import {getAssetBalance} from '../../utils/asset.utils';
 import {getWallet} from '../../utils/wallet.utils';
 
 const PRECISION_FACTOR = 10 ** 6;
 
-export const createMarketSellOrder = async (
+export const processOrderSellPercentAmount = async (
     chatId: number,
-    inputPercentAmount: number
+    sellPercentAmount: number
 ) => {
     await LITE_CLIENT.updateLastBlock();
 
@@ -30,21 +29,12 @@ export const createMarketSellOrder = async (
         wallet.address
     );
 
-    /** check balance */
-    if (inputAssetBalance === 0n) {
-        return sendEmptyAssetBalancePage(
-            chatId,
-            uiState.selectedToken.data.symbol,
-            wallet.address.toString()
-        );
-    }
-
     const percentBigInt = BigInt(
-        Math.round(inputPercentAmount * PRECISION_FACTOR)
+        Math.round(sellPercentAmount * PRECISION_FACTOR)
     );
 
     const inputAssetAmount =
         (inputAssetBalance * percentBigInt) / BigInt(100 * PRECISION_FACTOR);
 
-    return createMarketOrder(chatId, OrderSide.Sell, inputAssetAmount);
+    return processOrderInputAmount(chatId, OrderSide.Sell, inputAssetAmount);
 };

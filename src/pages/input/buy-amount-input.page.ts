@@ -2,26 +2,23 @@ import {isDefined} from '@rnw-community/shared';
 
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../../enums/input-type.enum';
-import {BOT, LITE_CLIENT} from '../../globals';
+import {BOT, LITE_CLIENT, TON} from '../../globals';
 import {getAssetBalance} from '../../utils/asset.utils';
+import {fromNano} from '../../utils/balance.utils';
 import {deleteMessageSafe} from '../../utils/bot.utils';
+import {formatOutputNumber} from '../../utils/format.utils';
 import {getWallet} from '../../utils/wallet.utils';
-import {send404Page} from '../404.page';
 import {sendEmptyAssetBalancePage} from '../empty-asset-balance.page';
 
-export const sendMarketSellPercentInputPage = async (chatId: number) => {
+export const sendBuyAmountInputPage = async (chatId: number) => {
     await LITE_CLIENT.updateLastBlock();
 
     const wallet = await getWallet(chatId);
-    const uiState = await RedisUiStateService.getUiState(chatId);
-
-    if (!isDefined(uiState?.selectedToken)) {
-        return send404Page(chatId);
-    }
 
     const inputAsset = {
-        address: uiState.selectedToken.data.address,
-        symbol: uiState.selectedToken.data.symbol
+        address: TON,
+        symbol: TON,
+        decimals: 9
     };
 
     const inputAssetBalance = await getAssetBalance(
@@ -38,11 +35,15 @@ export const sendMarketSellPercentInputPage = async (chatId: number) => {
         );
     }
 
+    const maxInputAmount = fromNano(inputAssetBalance, inputAsset.decimals);
+
     const newMessage = await BOT.sendMessage(
         chatId,
-        `Reply with the amount you wish to sell (0 - 100 %, Example: 25.5):`,
+        `Reply with the amount you wish to buy (0 - ${formatOutputNumber(maxInputAmount)} ${inputAsset.symbol}, Example: 2.5):`,
         {reply_markup: {force_reply: true}}
     );
+
+    const uiState = await RedisUiStateService.getUiState(chatId);
 
     if (isDefined(uiState?.inputRequest)) {
         await deleteMessageSafe(chatId, uiState.inputRequest.messageId);
@@ -51,7 +52,7 @@ export const sendMarketSellPercentInputPage = async (chatId: number) => {
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
         inputRequest: {
-            type: InputTypeEnum.MarketSellPercent,
+            type: InputTypeEnum.BuyAmount,
             messageId: newMessage.message_id
         }
     });

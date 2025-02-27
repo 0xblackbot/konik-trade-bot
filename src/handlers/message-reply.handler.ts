@@ -2,9 +2,9 @@ import {TelegramEvents} from 'node-telegram-bot-api';
 
 import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../enums/input-type.enum';
-import {marketBuyAmountInputHandler} from '../pages/input/market-buy-amount-input.handler';
-import {marketSellPercentInputHandler} from '../pages/input/market-sell-percent-input.handler';
+import {buyAmountInputHandler} from '../pages/input/buy-amount-input.handler';
 import {maxSlippageInputHandler} from '../pages/input/max-slippage-input.handler';
+import {sellPercentInputHandler} from '../pages/input/sell-percent-input.handler';
 
 export const messageReplyHandler: TelegramEvents['message'] = async message => {
     const uiState = await RedisUiStateService.getUiState(message.chat.id);
@@ -21,12 +21,12 @@ export const messageReplyHandler: TelegramEvents['message'] = async message => {
             inputRequest: undefined
         });
 
-        if (uiState.inputRequest.type === InputTypeEnum.MarketBuyAmount) {
-            return marketBuyAmountInputHandler(message.chat.id, messageText);
+        if (uiState.inputRequest.type === InputTypeEnum.BuyAmount) {
+            return buyAmountInputHandler(message.chat.id, messageText);
         }
 
-        if (uiState.inputRequest.type === InputTypeEnum.MarketSellPercent) {
-            return marketSellPercentInputHandler(message.chat.id, messageText);
+        if (uiState.inputRequest.type === InputTypeEnum.SellPercent) {
+            return sellPercentInputHandler(message.chat.id, messageText);
         }
 
         if (uiState.inputRequest.type === InputTypeEnum.MaxSlippage) {

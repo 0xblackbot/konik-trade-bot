@@ -1,12 +1,13 @@
+import {OrderSide} from '../../enums/order-side.enum';
 import {LITE_CLIENT, TON} from '../../globals';
-import {createMarketBuyOrder} from '../../orders/market/market-buy.order';
+import {processOrderInputAmount} from '../../orders/utils/order-input-amount.utils';
 import {getAssetBalance} from '../../utils/asset.utils';
 import {fromNano, toNano} from '../../utils/balance.utils';
 import {formatOutputNumber} from '../../utils/format.utils';
 import {getWallet} from '../../utils/wallet.utils';
 import {sendErrorPage} from '../error.page';
 
-export const marketBuyAmountInputHandler = async (
+export const buyAmountInputHandler = async (
     chatId: number,
     messageText: string
 ) => {
@@ -33,5 +34,9 @@ export const marketBuyAmountInputHandler = async (
         );
     }
 
-    return createMarketBuyOrder(chatId, toNano(inputAmount.toString(), 9));
+    return processOrderInputAmount(
+        chatId,
+        OrderSide.Buy,
+        toNano(inputAmount.toString(), 9)
+    );
 };

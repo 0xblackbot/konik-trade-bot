@@ -1,14 +1,15 @@
 import {TelegramEvents} from 'node-telegram-bot-api';
 
 import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {createMarketBuyOrder} from '../orders/market/market-buy.order';
-import {createMarketSellOrder} from '../orders/market/market-sell.order';
+import {OrderSide} from '../enums/order-side.enum';
+import {processOrderInputAmount} from '../orders/utils/order-input-amount.utils';
+import {processOrderSellPercentAmount} from '../orders/utils/sell-percent-input.utils';
 import {sendBuySellPage} from '../pages/buy-n-sell.page';
 import {sendHelpPage} from '../pages/help.page';
 import {updateHomePage} from '../pages/home.page';
-import {sendMarketBuyAmountInputPage} from '../pages/input/market-buy-amount-input.page';
-import {sendMarketSellPercentInputPage} from '../pages/input/market-sell-percent-input.page';
+import {sendBuyAmountInputPage} from '../pages/input/buy-amount-input.page';
 import {sendMaxSlippageInputPage} from '../pages/input/max-slippage-input.page';
+import {sendSellPercentInputPage} from '../pages/input/sell-percent-input.page';
 import {sendLimitOrderPage} from '../pages/limit-order.page';
 import {sendSeepPhraseWarning} from '../pages/seed-phrase-warning.page';
 import {sendSettingsPage} from '../pages/settings.page';
@@ -29,23 +30,28 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
             );
         }
 
-        if (query.data === CallbackDataType.MarketBuy_10) {
-            return createMarketBuyOrder(query.message.chat.id, toNano('10', 9));
+        if (query.data === CallbackDataType.Buy_10) {
+            return processOrderInputAmount(
+                query.message.chat.id,
+                OrderSide.Buy,
+                toNano('10', 9)
+            );
         }
 
-        if (query.data === CallbackDataType.MarketBuy_100) {
-            return createMarketBuyOrder(
+        if (query.data === CallbackDataType.Buy_100) {
+            return processOrderInputAmount(
                 query.message.chat.id,
+                OrderSide.Buy,
                 toNano('100', 9)
             );
         }
 
-        if (query.data === CallbackDataType.MarketSell_50) {
-            return createMarketSellOrder(query.message.chat.id, 50);
+        if (query.data === CallbackDataType.Sell_50) {
+            return processOrderSellPercentAmount(query.message.chat.id, 50);
         }
 
-        if (query.data === CallbackDataType.MarketSell_100) {
-            return createMarketSellOrder(query.message.chat.id, 100);
+        if (query.data === CallbackDataType.Sell_100) {
+            return processOrderSellPercentAmount(query.message.chat.id, 100);
         }
 
         if (
@@ -67,12 +73,12 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
             return sendSeepPhraseWarning(query.message.chat.id);
         }
 
-        if (query.data === CallbackDataType.MarketBuy_X) {
-            return sendMarketBuyAmountInputPage(query.message.chat.id);
+        if (query.data === CallbackDataType.Buy_X) {
+            return sendBuyAmountInputPage(query.message.chat.id);
         }
 
-        if (query.data === CallbackDataType.MarketSell_X) {
-            return sendMarketSellPercentInputPage(query.message.chat.id);
+        if (query.data === CallbackDataType.Sell_X) {
+            return sendSellPercentInputPage(query.message.chat.id);
         }
 
         if (query.data === CallbackDataType.RefreshHome) {

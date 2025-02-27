@@ -7,6 +7,7 @@ import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
 import {BOT, LITE_CLIENT, TON} from '../../globals';
 import {send404Page} from '../../pages/404.page';
+import {sendEmptyAssetBalancePage} from '../../pages/empty-asset-balance.page';
 import {sendErrorPage} from '../../pages/error.page';
 import {getOrderPageText} from '../../pages/order.page';
 import {RAINBOW_AG_AUTH_HEADER} from '../../secrets';
@@ -51,6 +52,14 @@ export const createMarketOrder = async (
         inputAsset.address,
         wallet.address
     );
+
+    if (inputAssetBalance === 0n) {
+        return sendEmptyAssetBalancePage(
+            chatId,
+            uiState.selectedToken.data.symbol,
+            wallet.address.toString()
+        );
+    }
 
     if (inputAssetBalance < inputAssetAmount) {
         const balance = fromNano(inputAssetBalance, inputAsset.decimals);

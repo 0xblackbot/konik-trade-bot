@@ -9,12 +9,12 @@ export enum CallbackDataType {
     RefreshHome = 'RefreshHome',
     Close = 'Close',
 
-    MarketBuy_10 = 'MarketBuy_10',
-    MarketBuy_100 = 'MarketBuy_100',
-    MarketBuy_X = 'MarketBuy_X',
-    MarketSell_50 = 'MarketSell_50',
-    MarketSell_100 = 'MarketSell_100',
-    MarketSell_X = 'MarketSell_X',
+    Buy_10 = 'Buy_10',
+    Buy_100 = 'Buy_100',
+    Buy_X = 'Buy_X',
+    Sell_50 = 'Sell_50',
+    Sell_100 = 'Sell_100',
+    Sell_X = 'Sell_X',
 
     CreateLimitOrder = 'CreateLimitOrder'
 }
