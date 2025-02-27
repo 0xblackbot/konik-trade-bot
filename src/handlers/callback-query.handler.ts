@@ -1,7 +1,6 @@
 import {TelegramEvents} from 'node-telegram-bot-api';
 
 import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {BOT} from '../globals';
 import {createMarketBuyOrder} from '../orders/market/market-buy.order';
 import {createMarketSellOrder} from '../orders/market/market-sell.order';
 import {sendBuySellPage} from '../pages/buy-n-sell.page';
@@ -10,10 +9,12 @@ import {updateHomePage} from '../pages/home.page';
 import {sendMarketBuyAmountInputPage} from '../pages/input/market-buy-amount-input.page';
 import {sendMarketSellPercentInputPage} from '../pages/input/market-sell-percent-input.page';
 import {sendMaxSlippageInputPage} from '../pages/input/max-slippage-input.page';
+import {sendLimitOrderPage} from '../pages/limit-order.page';
 import {sendSeepPhraseWarning} from '../pages/seed-phrase-warning.page';
 import {sendSettingsPage} from '../pages/settings.page';
 import {sendUnavailablePage} from '../pages/unavailable.page';
 import {toNano} from '../utils/balance.utils';
+import {deleteMessageSafe} from '../utils/bot.utils';
 
 export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
     if (query.message) {
@@ -22,10 +23,10 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
         }
 
         if (query.data === CallbackDataType.Close) {
-            return BOT.deleteMessage(
+            return deleteMessageSafe(
                 query.message.chat.id,
                 query.message.message_id
-            ).catch(error => console.log('BOT.deleteMessage error', error));
+            );
         }
 
         if (query.data === CallbackDataType.MarketBuy_10) {
@@ -83,6 +84,10 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
 
         if (query.data === CallbackDataType.ChangeMaxSlippage) {
             return sendMaxSlippageInputPage(query.message.chat.id);
+        }
+
+        if (query.data === CallbackDataType.CreateLimitOrder) {
+            return sendLimitOrderPage(query.message.chat.id);
         }
     }
 };

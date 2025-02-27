@@ -5,7 +5,8 @@ import {InputTypeEnum} from '../enums/input-type.enum';
 export interface UiState {
     selectedToken?: {
         data: Asset;
-        messageId: number; // Token page id
+        tokenPageMessageId: number;
+        limitOrderPageMessageId?: number;
     };
     inputRequest?: {
         type: InputTypeEnum;

@@ -4,6 +4,7 @@ import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../../enums/input-type.enum';
 import {BOT, LITE_CLIENT} from '../../globals';
 import {getAssetBalance} from '../../utils/asset.utils';
+import {deleteMessageSafe} from '../../utils/bot.utils';
 import {getWallet} from '../../utils/wallet.utils';
 import {send404Page} from '../404.page';
 import {sendEmptyAssetBalancePage} from '../empty-asset-balance.page';
@@ -44,9 +45,7 @@ export const sendMarketSellPercentInputPage = async (chatId: number) => {
     );
 
     if (isDefined(uiState?.inputRequest)) {
-        await BOT.deleteMessage(chatId, uiState.inputRequest.messageId).catch(
-            error => console.log('BOT.deleteMessage error', error)
-        );
+        await deleteMessageSafe(chatId, uiState.inputRequest.messageId);
     }
 
     await RedisUiStateService.setUiState(chatId, {

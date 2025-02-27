@@ -14,5 +14,7 @@ export enum CallbackDataType {
     MarketBuy_X = 'MarketBuy_X',
     MarketSell_50 = 'MarketSell_50',
     MarketSell_100 = 'MarketSell_100',
-    MarketSell_X = 'MarketSell_X'
+    MarketSell_X = 'MarketSell_X',
+
+    CreateLimitOrder = 'CreateLimitOrder'
 }

@@ -10,6 +10,7 @@ import {sendErrorPage} from './error.page';
 import {getAsset} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
+import {deleteMessageSafe} from '../utils/bot.utils';
 import {formatOutputNumber} from '../utils/format.utils';
 import {getWallet} from '../utils/wallet.utils';
 
@@ -100,6 +101,12 @@ const sendTokenPageInfo = async (message: Message) => {
                             callback_data: CallbackDataType.MarketSell_X
                         }
                     ],
+                    [
+                        {
+                            text: 'Create Limit Order 📈',
+                            callback_data: CallbackDataType.CreateLimitOrder
+                        }
+                    ],
                     [{text: 'Close', callback_data: CallbackDataType.Close}]
                 ]
             }
@@ -110,25 +117,32 @@ const sendTokenPageInfo = async (message: Message) => {
     const uiState = await RedisUiStateService.getUiState(message.chat.id);
 
     if (isDefined(uiState?.selectedToken)) {
-        await BOT.deleteMessage(
-            message.chat.id,
-            uiState.selectedToken.messageId
-        ).catch(error => console.log('BOT.deleteMessage error', error));
+        await Promise.all([
+            deleteMessageSafe(
+                message.chat.id,
+                uiState.selectedToken.tokenPageMessageId
+            ),
+            deleteMessageSafe(
+                message.chat.id,
+                uiState.selectedToken.limitOrderPageMessageId
+            )
+        ]);
     }
 
     /** reset input request */
     if (isDefined(uiState?.inputRequest)) {
-        await BOT.deleteMessage(
+        await deleteMessageSafe(
             message.chat.id,
             uiState.inputRequest.messageId
-        ).catch(error => console.log('BOT.deleteMessage error', error));
+        );
     }
 
     await RedisUiStateService.setUiState(message.chat.id, {
         ...uiState,
         selectedToken: {
             data: asset,
-            messageId: newMessage.message_id
+            tokenPageMessageId: newMessage.message_id,
+            limitOrderPageMessageId: undefined
         },
         inputRequest: undefined
     });

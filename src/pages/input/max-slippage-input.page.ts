@@ -4,6 +4,7 @@ import {DEFAULT_SETTINGS} from '../../classes/redis-settings.service';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../../enums/input-type.enum';
 import {BOT} from '../../globals';
+import {deleteMessageSafe} from '../../utils/bot.utils';
 
 export const sendMaxSlippageInputPage = async (chatId: number) => {
     const newMessage = await BOT.sendMessage(
@@ -17,9 +18,7 @@ export const sendMaxSlippageInputPage = async (chatId: number) => {
     const uiState = await RedisUiStateService.getUiState(chatId);
 
     if (isDefined(uiState?.inputRequest)) {
-        await BOT.deleteMessage(chatId, uiState.inputRequest.messageId).catch(
-            error => console.log('BOT.deleteMessage error', error)
-        );
+        await deleteMessageSafe(chatId, uiState.inputRequest.messageId);
     }
 
     await RedisUiStateService.setUiState(chatId, {
