@@ -20,8 +20,8 @@ export const sendSellPercentInputPage = async (chatId: number) => {
     }
 
     const inputAsset = {
-        address: uiState.selectedToken.data.address,
-        symbol: uiState.selectedToken.data.symbol
+        address: uiState.selectedToken.address,
+        symbol: uiState.selectedToken.symbol
     };
 
     const inputAssetBalance = await getAssetBalance(

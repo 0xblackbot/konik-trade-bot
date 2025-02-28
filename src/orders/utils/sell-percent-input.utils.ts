@@ -3,6 +3,7 @@ import {isDefined} from '@rnw-community/shared';
 import {processOrderInputAmount} from './order-input-amount.utils';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
+import {OrderType} from '../../enums/order-type.enum';
 import {LITE_CLIENT} from '../../globals';
 import {send404Page} from '../../pages/404.page';
 import {getAssetBalance} from '../../utils/asset.utils';
@@ -12,6 +13,7 @@ const PRECISION_FACTOR = 10 ** 6;
 
 export const processOrderSellPercentAmount = async (
     chatId: number,
+    orderType: OrderType,
     sellPercentAmount: number
 ) => {
     await LITE_CLIENT.updateLastBlock();
@@ -25,7 +27,7 @@ export const processOrderSellPercentAmount = async (
     }
 
     const inputAssetBalance = await getAssetBalance(
-        uiState.selectedToken.data.address,
+        uiState.selectedToken.address,
         wallet.address
     );
 
@@ -36,5 +38,10 @@ export const processOrderSellPercentAmount = async (
     const inputAssetAmount =
         (inputAssetBalance * percentBigInt) / BigInt(100 * PRECISION_FACTOR);
 
-    return processOrderInputAmount(chatId, OrderSide.Sell, inputAssetAmount);
+    return processOrderInputAmount(
+        chatId,
+        orderType,
+        OrderSide.Sell,
+        inputAssetAmount
+    );
 };

@@ -72,34 +72,34 @@ export const sendLimitOrderTargetPricePage = async (
                                   {
                                       text: '-5% Price',
                                       callback_data:
-                                          CallbackDataType.Price_minus5
+                                          CallbackDataType.PriceChange + -5
                                   },
                                   {
                                       text: '-10% Price',
                                       callback_data:
-                                          CallbackDataType.Price_minus10
+                                          CallbackDataType.PriceChange + -10
                                   },
                                   {
                                       text: '-20% Price',
                                       callback_data:
-                                          CallbackDataType.Price_minus20
+                                          CallbackDataType.PriceChange + -20
                                   }
                               ],
                               [
                                   {
                                       text: '-30% Price',
                                       callback_data:
-                                          CallbackDataType.Price_minus30
+                                          CallbackDataType.PriceChange + -30
                                   },
                                   {
                                       text: '-40% Price',
                                       callback_data:
-                                          CallbackDataType.Price_minus40
+                                          CallbackDataType.PriceChange + -40
                                   },
                                   {
                                       text: '-50% Price',
                                       callback_data:
-                                          CallbackDataType.Price_minus50
+                                          CallbackDataType.PriceChange + -50
                                   }
                               ],
                               [
@@ -116,34 +116,34 @@ export const sendLimitOrderTargetPricePage = async (
                                   {
                                       text: '+20% Price',
                                       callback_data:
-                                          CallbackDataType.Price_plus20
+                                          CallbackDataType.PriceChange + 20
                                   },
                                   {
                                       text: '+50% Price',
                                       callback_data:
-                                          CallbackDataType.Price_plus50
+                                          CallbackDataType.PriceChange + 50
                                   },
                                   {
                                       text: '+70% Price',
                                       callback_data:
-                                          CallbackDataType.Price_plus70
+                                          CallbackDataType.PriceChange + 70
                                   }
                               ],
                               [
                                   {
                                       text: '+100% Price',
                                       callback_data:
-                                          CallbackDataType.Price_plus100
+                                          CallbackDataType.PriceChange + 100
                                   },
                                   {
                                       text: '+200% Price',
                                       callback_data:
-                                          CallbackDataType.Price_plus200
+                                          CallbackDataType.PriceChange + 200
                                   },
                                   {
                                       text: '+300% Price',
                                       callback_data:
-                                          CallbackDataType.Price_plus300
+                                          CallbackDataType.PriceChange + 300
                                   }
                               ],
                               [

@@ -1,5 +1,9 @@
+import {isDefined} from '@rnw-community/shared';
+
+import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {LITE_CLIENT} from '../../globals';
 import {processOrderSellPercentAmount} from '../../orders/utils/sell-percent-input.utils';
+import {send404Page} from '../404.page';
 import {sendErrorPage} from '../error.page';
 
 export const sellPercentInputHandler = async (
@@ -8,7 +12,13 @@ export const sellPercentInputHandler = async (
 ) => {
     await LITE_CLIENT.updateLastBlock();
 
+    const uiState = await RedisUiStateService.getUiState(chatId);
+
     const inputAmount = parseFloat(messageText);
+
+    if (!isDefined(uiState.orderType)) {
+        return send404Page(chatId);
+    }
 
     if (isNaN(inputAmount)) {
         return sendErrorPage(
@@ -24,5 +34,9 @@ export const sellPercentInputHandler = async (
         );
     }
 
-    return processOrderSellPercentAmount(chatId, inputAmount);
+    return processOrderSellPercentAmount(
+        chatId,
+        uiState.orderType,
+        inputAmount
+    );
 };

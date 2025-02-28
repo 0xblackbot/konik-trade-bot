@@ -4,7 +4,6 @@ import {Asset} from 'rainbow-swap-sdk';
 
 import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {OrderType} from '../enums/order-type.enum';
 import {BOT, LITE_CLIENT, TON} from '../globals';
 import {sendErrorPage} from './error.page';
 import {getAsset} from '../utils/api.utils';
@@ -59,10 +58,7 @@ const sendTokenPageInfo = async (message: Message) => {
     /** update ui state */
     await RedisUiStateService.setUiState(message.chat.id, {
         ...uiState,
-        selectedToken: {
-            data: asset,
-            orderType: OrderType.Market
-        }
+        selectedToken: asset
     });
 
     const newMessage = await BOT.sendMessage(
@@ -87,31 +83,31 @@ const sendTokenPageInfo = async (message: Message) => {
                     [
                         {
                             text: 'Buy 10 TON',
-                            callback_data: CallbackDataType.Buy_10
+                            callback_data: CallbackDataType.MarketBuy + 10
                         },
                         {
                             text: 'Sell 50%',
-                            callback_data: CallbackDataType.Sell_50
+                            callback_data: CallbackDataType.MarketSell + 50
                         }
                     ],
                     [
                         {
                             text: 'Buy 100 TON',
-                            callback_data: CallbackDataType.Buy_100
+                            callback_data: CallbackDataType.MarketBuy + 100
                         },
                         {
                             text: 'Sell 100%',
-                            callback_data: CallbackDataType.Sell_100
+                            callback_data: CallbackDataType.MarketSell + 100
                         }
                     ],
                     [
                         {
                             text: 'Buy X TON',
-                            callback_data: CallbackDataType.Buy_X
+                            callback_data: CallbackDataType.MarketBuy + 'X'
                         },
                         {
                             text: 'Sell X %',
-                            callback_data: CallbackDataType.Sell_X
+                            callback_data: CallbackDataType.MarketSell + 'X'
                         }
                     ],
                     [

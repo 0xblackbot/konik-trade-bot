@@ -10,13 +10,9 @@ export interface UiState {
         lastPage?: number; // any other (except token page) active page
         inputPage?: number;
     };
-    selectedToken?: {
-        data: Asset;
-        orderType: OrderType;
-    };
-    inputRequest?: {
-        type: InputTypeEnum;
-    };
+    selectedToken?: Asset;
+    orderType?: OrderType;
+    inputRequestType?: InputTypeEnum;
     limitOrder?: {
         side?: OrderSide;
         inputAssetAmount?: string;

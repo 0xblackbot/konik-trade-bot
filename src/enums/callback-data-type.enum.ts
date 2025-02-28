@@ -9,12 +9,11 @@ export enum CallbackDataType {
     RefreshHome = 'RefreshHome',
     Close = 'Close',
 
-    Buy_10 = 'Buy_10',
-    Buy_100 = 'Buy_100',
-    Buy_X = 'Buy_X',
-    Sell_50 = 'Sell_50',
-    Sell_100 = 'Sell_100',
-    Sell_X = 'Sell_X',
+    MarketBuy = 'MarketBuy_',
+    MarketSell = 'MarketSell_',
+
+    LimitBuy = 'LimitBuy_',
+    LimitSell = 'LimitSell_',
 
     LimitOrder = 'LimitOrder_',
     CancelLimitOrder = 'CancelLimitOrder_',
@@ -23,17 +22,5 @@ export enum CallbackDataType {
     CreateLimitOrderConfirm = 'CreateLimitOrderConfirm',
     LimitOrderTargetPrice = 'LimitOrderTargetPrice',
 
-    Price_minus5 = 'Price_minus5',
-    Price_minus10 = 'Price_minus10',
-    Price_minus20 = 'Price_minus20',
-    Price_minus30 = 'Price_minus30',
-    Price_minus40 = 'Price_minus40',
-    Price_minus50 = 'Price_minus50',
-
-    Price_plus20 = 'Price_plus20',
-    Price_plus50 = 'Price_plus50',
-    Price_plus70 = 'Price_plus70',
-    Price_plus100 = 'Price_plus100',
-    Price_plus200 = 'Price_plus200',
-    Price_plus300 = 'Price_plus300'
+    PriceChange = 'PriceChange_'
 }

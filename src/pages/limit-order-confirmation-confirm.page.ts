@@ -11,7 +11,7 @@ export const sendLimitOrderConfirmationConfirmPage = async (chatId: number) => {
     const uiState = await RedisUiStateService.getUiState(chatId);
 
     if (
-        !isDefined(uiState.selectedToken?.data) ||
+        !isDefined(uiState.selectedToken) ||
         !isDefined(uiState.limitOrder?.side) ||
         !isDefined(uiState.limitOrder?.inputAssetAmount) ||
         !isDefined(uiState.limitOrder?.targetOutputAssetAmount) ||
@@ -24,7 +24,7 @@ export const sendLimitOrderConfirmationConfirmPage = async (chatId: number) => {
         id: 0,
         chatId,
         side: uiState.limitOrder.side,
-        asset: uiState.selectedToken.data,
+        asset: uiState.selectedToken,
         inputAssetAmount: uiState.limitOrder.inputAssetAmount,
         targetOutputAssetAmount: uiState.limitOrder.targetOutputAssetAmount,
         targetPrice: uiState.limitOrder.targetPrice

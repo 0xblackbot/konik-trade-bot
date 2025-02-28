@@ -12,7 +12,7 @@ export const messageReplyHandler: TelegramEvents['message'] = async message => {
 
     if (
         uiState.messageIds &&
-        uiState.inputRequest &&
+        uiState.inputRequestType &&
         message.reply_to_message?.message_id === uiState.messageIds.inputPage
     ) {
         const messageText = message.text?.trim() ?? '';
@@ -20,22 +20,22 @@ export const messageReplyHandler: TelegramEvents['message'] = async message => {
         /** reset input request */
         await RedisUiStateService.setUiState(message.chat.id, {
             ...uiState,
-            inputRequest: undefined
+            inputRequestType: undefined
         });
 
-        if (uiState.inputRequest.type === InputTypeEnum.BuyAmount) {
+        if (uiState.inputRequestType === InputTypeEnum.BuyAmount) {
             return buyAmountInputHandler(message.chat.id, messageText);
         }
 
-        if (uiState.inputRequest.type === InputTypeEnum.SellPercent) {
+        if (uiState.inputRequestType === InputTypeEnum.SellPercent) {
             return sellPercentInputHandler(message.chat.id, messageText);
         }
 
-        if (uiState.inputRequest.type === InputTypeEnum.MaxSlippage) {
+        if (uiState.inputRequestType === InputTypeEnum.MaxSlippage) {
             return maxSlippageInputHandler(message.chat.id, messageText);
         }
 
-        if (uiState.inputRequest.type === InputTypeEnum.LimitOrderTargetPrice) {
+        if (uiState.inputRequestType === InputTypeEnum.LimitOrderTargetPrice) {
             return limitOrderTargetPriceHandler(message.chat.id, messageText);
         }
     }

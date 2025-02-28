@@ -6,6 +6,7 @@ import {OrderSide} from '../enums/order-side.enum';
 import {TON} from '../globals';
 import {deleteMessageSafe} from './bot.utils';
 import {InputTypeEnum} from '../enums/input-type.enum';
+import {OrderType} from '../enums/order-type.enum';
 
 export const getInputOutputAssets = async (chatId: number, side: OrderSide) => {
     const uiState = await RedisUiStateService.getUiState(chatId);
@@ -21,9 +22,9 @@ export const getInputOutputAssets = async (chatId: number, side: OrderSide) => {
     };
 
     const bAsset = {
-        address: uiState.selectedToken.data.address,
-        symbol: uiState.selectedToken.data.symbol,
-        decimals: uiState.selectedToken.data.decimals
+        address: uiState.selectedToken.address,
+        symbol: uiState.selectedToken.symbol,
+        decimals: uiState.selectedToken.decimals
     };
 
     return {
@@ -50,7 +51,7 @@ export const saveTokenPage = async (chatId: number, newMessage: Message) => {
             lastPage: undefined,
             inputPage: undefined
         },
-        inputRequest: undefined,
+        inputRequestType: undefined,
         limitOrder: undefined
     });
 };
@@ -72,7 +73,7 @@ export const saveLastPage = async (chatId: number, newMessage: Message) => {
             lastPage: newMessage.message_id,
             inputPage: undefined
         },
-        inputRequest: undefined
+        inputRequestType: undefined
     });
 };
 
@@ -93,8 +94,15 @@ export const saveInputPage = async (
             lastPage: uiState.messageIds?.lastPage,
             inputPage: newMessage.message_id
         },
-        inputRequest: {
-            type: newType
-        }
+        inputRequestType: newType
+    });
+};
+
+export const saveOrderType = async (chatId: number, orderType: OrderType) => {
+    const uiState = await RedisUiStateService.getUiState(chatId);
+
+    await RedisUiStateService.setUiState(chatId, {
+        ...uiState,
+        orderType
     });
 };

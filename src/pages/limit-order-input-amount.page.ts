@@ -2,7 +2,6 @@ import {isDefined} from '@rnw-community/shared';
 
 import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {OrderType} from '../enums/order-type.enum';
 import {BOT} from '../globals';
 import {send404Page} from './404.page';
 import {saveLastPage} from '../utils/ui-state.utils';
@@ -18,10 +17,6 @@ export const sendLimitOrderInputAmountPage = async (chatId: number) => {
     /** update ui state */
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
-        selectedToken: {
-            ...uiState.selectedToken,
-            orderType: OrderType.Limit
-        },
         limitOrder: undefined
     });
 
@@ -35,31 +30,31 @@ export const sendLimitOrderInputAmountPage = async (chatId: number) => {
                     [
                         {
                             text: 'Buy 10 TON',
-                            callback_data: CallbackDataType.Buy_10
+                            callback_data: CallbackDataType.LimitBuy + 10
                         },
                         {
                             text: 'Sell 50%',
-                            callback_data: CallbackDataType.Sell_50
+                            callback_data: CallbackDataType.LimitSell + 50
                         }
                     ],
                     [
                         {
                             text: 'Buy 100 TON',
-                            callback_data: CallbackDataType.Buy_100
+                            callback_data: CallbackDataType.LimitBuy + 100
                         },
                         {
                             text: 'Sell 100%',
-                            callback_data: CallbackDataType.Sell_100
+                            callback_data: CallbackDataType.LimitSell + 100
                         }
                     ],
                     [
                         {
                             text: 'Buy X TON',
-                            callback_data: CallbackDataType.Buy_X
+                            callback_data: CallbackDataType.LimitBuy + 'X'
                         },
                         {
                             text: 'Sell X %',
-                            callback_data: CallbackDataType.Sell_X
+                            callback_data: CallbackDataType.LimitSell + 'X'
                         }
                     ],
                     CLOSE_BUTTON

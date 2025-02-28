@@ -1,5 +1,4 @@
 import {createMarketOrder} from './market-order.utils';
-import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
 import {OrderType} from '../../enums/order-type.enum';
 import {LITE_CLIENT} from '../../globals';
@@ -14,6 +13,7 @@ import {getWallet} from '../../utils/wallet.utils';
 
 export const processOrderInputAmount = async (
     chatId: number,
+    orderType: OrderType,
     side: OrderSide,
     inputAssetAmount: bigint
 ) => {
@@ -44,13 +44,11 @@ export const processOrderInputAmount = async (
         );
     }
 
-    const uiState = await RedisUiStateService.getUiState(chatId);
-
-    if (uiState.selectedToken?.orderType === OrderType.Market) {
+    if (orderType === OrderType.Market) {
         return createMarketOrder(chatId, side, inputAssetAmount);
     }
 
-    if (uiState.selectedToken?.orderType === OrderType.Limit) {
+    if (orderType === OrderType.Limit) {
         return sendLimitOrderTargetPricePage(chatId, side, inputAssetAmount);
     }
 };

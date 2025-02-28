@@ -2,6 +2,7 @@ import {TelegramEvents} from 'node-telegram-bot-api';
 
 import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {OrderSide} from '../enums/order-side.enum';
+import {OrderType} from '../enums/order-type.enum';
 import {cancelLimitOrder} from '../orders/utils/limit-order.utils';
 import {processOrderInputAmount} from '../orders/utils/order-input-amount.utils';
 import {processTargetPercentPriceChange} from '../orders/utils/percent-price-change.utils';
@@ -23,151 +24,157 @@ import {sendSettingsPage} from '../pages/settings.page';
 import {sendUnavailablePage} from '../pages/unavailable.page';
 import {toNano} from '../utils/balance.utils';
 import {deleteMessageSafe} from '../utils/bot.utils';
+import {saveOrderType} from '../utils/ui-state.utils';
 
-export const callbackQueryHandler: TelegramEvents['callback_query'] = query => {
-    if (query.message) {
-        if (query.data === CallbackDataType.Help) {
-            return sendHelpPage(query.message.chat.id);
-        }
+export const callbackQueryHandler: TelegramEvents['callback_query'] =
+    async query => {
+        if (query.message) {
+            const chatId = query.message.chat.id;
 
-        if (query.data === CallbackDataType.Close) {
-            return deleteMessageSafe(
-                query.message.chat.id,
-                query.message.message_id
-            );
-        }
+            if (query.data === CallbackDataType.Help) {
+                return sendHelpPage(chatId);
+            }
 
-        if (query.data === CallbackDataType.Buy_10) {
-            return processOrderInputAmount(
-                query.message.chat.id,
-                OrderSide.Buy,
-                toNano('10', 9)
-            );
-        }
+            if (query.data === CallbackDataType.Close) {
+                return deleteMessageSafe(chatId, query.message.message_id);
+            }
 
-        if (query.data === CallbackDataType.Buy_100) {
-            return processOrderInputAmount(
-                query.message.chat.id,
-                OrderSide.Buy,
-                toNano('100', 9)
-            );
-        }
+            if (
+                query.data?.startsWith(CallbackDataType.MarketBuy) ||
+                query.data?.startsWith(CallbackDataType.MarketSell)
+            ) {
+                await saveOrderType(chatId, OrderType.Market);
+            }
 
-        if (query.data === CallbackDataType.Sell_50) {
-            return processOrderSellPercentAmount(query.message.chat.id, 50);
-        }
+            if (
+                query.data?.startsWith(CallbackDataType.LimitBuy) ||
+                query.data?.startsWith(CallbackDataType.LimitSell)
+            ) {
+                await saveOrderType(chatId, OrderType.Limit);
+            }
 
-        if (query.data === CallbackDataType.Sell_100) {
-            return processOrderSellPercentAmount(query.message.chat.id, 100);
-        }
+            if (
+                query.data?.startsWith(CallbackDataType.MarketBuy) ||
+                query.data?.startsWith(CallbackDataType.LimitBuy)
+            ) {
+                const orderType = query.data?.startsWith(
+                    CallbackDataType.MarketBuy
+                )
+                    ? OrderType.Market
+                    : OrderType.Limit;
+                const rawAmount = query.data.slice(
+                    orderType === OrderType.Market
+                        ? CallbackDataType.MarketBuy.length
+                        : CallbackDataType.LimitBuy.length
+                );
 
-        if (query.data === CallbackDataType.DCAOrders) {
-            return sendUnavailablePage(query.message.chat.id);
-        }
+                if (rawAmount === 'X') {
+                    return sendBuyAmountInputPage(chatId);
+                } else {
+                    return processOrderInputAmount(
+                        chatId,
+                        orderType,
+                        OrderSide.Buy,
+                        toNano(rawAmount, 9)
+                    );
+                }
+            }
 
-        if (query.data === CallbackDataType.LimitOrders) {
-            return sendLimitOrdersPage(query.message.chat.id);
-        }
+            if (
+                query.data?.startsWith(CallbackDataType.MarketSell) ||
+                query.data?.startsWith(CallbackDataType.LimitSell)
+            ) {
+                const orderType = query.data?.startsWith(
+                    CallbackDataType.MarketSell
+                )
+                    ? OrderType.Market
+                    : OrderType.Limit;
+                const rawAmount = query.data.slice(
+                    orderType === OrderType.Market
+                        ? CallbackDataType.MarketSell.length
+                        : CallbackDataType.LimitSell.length
+                );
 
-        if (query.data?.startsWith(CallbackDataType.LimitOrder)) {
-            const orderId = query.data.slice(
-                CallbackDataType.LimitOrder.length
-            );
+                if (rawAmount === 'X') {
+                    return sendSellPercentInputPage(chatId);
+                } else {
+                    return processOrderSellPercentAmount(
+                        chatId,
+                        orderType,
+                        Number(rawAmount)
+                    );
+                }
+            }
 
-            return sendLimitOrderPage(query.message.chat.id, orderId);
-        }
+            if (query.data === CallbackDataType.DCAOrders) {
+                return sendUnavailablePage(chatId);
+            }
 
-        if (query.data?.startsWith(CallbackDataType.CancelLimitOrder)) {
-            const orderId = query.data.slice(
-                CallbackDataType.CancelLimitOrder.length
-            );
+            if (query.data === CallbackDataType.LimitOrders) {
+                return sendLimitOrdersPage(chatId);
+            }
 
-            return cancelLimitOrder(query.message.chat.id, Number(orderId));
-        }
+            if (query.data?.startsWith(CallbackDataType.LimitOrder)) {
+                const orderId = query.data.slice(
+                    CallbackDataType.LimitOrder.length
+                );
 
-        if (query.data === CallbackDataType.BuyAndSell) {
-            return sendBuySellPage(query.message.chat.id);
-        }
+                return sendLimitOrderPage(chatId, orderId);
+            }
 
-        if (query.data === CallbackDataType.Settings) {
-            return sendSettingsPage(query.message.chat.id);
-        }
+            if (query.data?.startsWith(CallbackDataType.CancelLimitOrder)) {
+                const orderId = query.data.slice(
+                    CallbackDataType.CancelLimitOrder.length
+                );
 
-        if (query.data === CallbackDataType.ExportSeedPhrase) {
-            return sendSeepPhraseWarning(query.message.chat.id);
-        }
+                return cancelLimitOrder(chatId, Number(orderId));
+            }
 
-        if (query.data === CallbackDataType.Buy_X) {
-            return sendBuyAmountInputPage(query.message.chat.id);
-        }
+            if (query.data === CallbackDataType.BuyAndSell) {
+                return sendBuySellPage(chatId);
+            }
 
-        if (query.data === CallbackDataType.Sell_X) {
-            return sendSellPercentInputPage(query.message.chat.id);
-        }
+            if (query.data === CallbackDataType.Settings) {
+                return sendSettingsPage(chatId);
+            }
 
-        if (query.data === CallbackDataType.RefreshHome) {
-            return updateHomePage(
-                query.message.chat.id,
-                query.message.message_id
-            );
-        }
+            if (query.data === CallbackDataType.ExportSeedPhrase) {
+                return sendSeepPhraseWarning(chatId);
+            }
 
-        if (query.data === CallbackDataType.ChangeMaxSlippage) {
-            return sendMaxSlippageInputPage(query.message.chat.id);
-        }
+            if (query.data === CallbackDataType.RefreshHome) {
+                return updateHomePage(chatId, query.message.message_id);
+            }
 
-        if (query.data === CallbackDataType.CreateLimitOrder) {
-            return sendLimitOrderInputAmountPage(query.message.chat.id);
-        }
+            if (query.data === CallbackDataType.ChangeMaxSlippage) {
+                return sendMaxSlippageInputPage(chatId);
+            }
 
-        if (query.data === CallbackDataType.CreateLimitOrderCancel) {
-            return sendLimitOrderCanceledPage(query.message.chat.id);
-        }
+            if (query.data === CallbackDataType.CreateLimitOrder) {
+                return sendLimitOrderInputAmountPage(chatId);
+            }
 
-        if (query.data === CallbackDataType.CreateLimitOrderConfirm) {
-            return sendLimitOrderConfirmationConfirmPage(query.message.chat.id);
-        }
+            if (query.data === CallbackDataType.CreateLimitOrderCancel) {
+                return sendLimitOrderCanceledPage(chatId);
+            }
 
-        if (query.data === CallbackDataType.LimitOrderTargetPrice) {
-            return sendLimitOrderTargetPricePage(query.message.chat.id);
-        }
+            if (query.data === CallbackDataType.CreateLimitOrderConfirm) {
+                return sendLimitOrderConfirmationConfirmPage(chatId);
+            }
 
-        if (query.data === CallbackDataType.Price_minus5) {
-            return processTargetPercentPriceChange(query.message.chat.id, -5);
-        }
-        if (query.data === CallbackDataType.Price_minus10) {
-            return processTargetPercentPriceChange(query.message.chat.id, -10);
-        }
-        if (query.data === CallbackDataType.Price_minus20) {
-            return processTargetPercentPriceChange(query.message.chat.id, -20);
-        }
-        if (query.data === CallbackDataType.Price_minus30) {
-            return processTargetPercentPriceChange(query.message.chat.id, -30);
-        }
-        if (query.data === CallbackDataType.Price_minus40) {
-            return processTargetPercentPriceChange(query.message.chat.id, -40);
-        }
-        if (query.data === CallbackDataType.Price_minus50) {
-            return processTargetPercentPriceChange(query.message.chat.id, -50);
-        }
+            if (query.data === CallbackDataType.LimitOrderTargetPrice) {
+                return sendLimitOrderTargetPricePage(chatId);
+            }
 
-        if (query.data === CallbackDataType.Price_plus20) {
-            return processTargetPercentPriceChange(query.message.chat.id, 20);
+            if (query.data?.startsWith(CallbackDataType.PriceChange)) {
+                const rawAmount = query.data.slice(
+                    CallbackDataType.PriceChange.length
+                );
+
+                return processTargetPercentPriceChange(
+                    chatId,
+                    Number(rawAmount)
+                );
+            }
         }
-        if (query.data === CallbackDataType.Price_plus50) {
-            return processTargetPercentPriceChange(query.message.chat.id, 50);
-        }
-        if (query.data === CallbackDataType.Price_plus70) {
-            return processTargetPercentPriceChange(query.message.chat.id, 70);
-        }
-        if (query.data === CallbackDataType.Price_plus100) {
-            return processTargetPercentPriceChange(query.message.chat.id, 100);
-        }
-        if (query.data === CallbackDataType.Price_plus200) {
-            return processTargetPercentPriceChange(query.message.chat.id, 200);
-        }
-        if (query.data === CallbackDataType.Price_plus300) {
-            return processTargetPercentPriceChange(query.message.chat.id, 300);
-        }
-    }
-};
+    };
