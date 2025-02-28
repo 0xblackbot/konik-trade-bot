@@ -56,7 +56,7 @@ export const saveTokenPage = async (chatId: number, newMessage: Message) => {
     });
 };
 
-export const saveLastPage = async (chatId: number, newMessage: Message) => {
+export const saveLastPage = async (chatId: number, newMessage?: Message) => {
     const uiState = await RedisUiStateService.getUiState(chatId);
 
     /** clear all previous messages (except tokenPage) */
@@ -70,7 +70,7 @@ export const saveLastPage = async (chatId: number, newMessage: Message) => {
         ...uiState,
         messageIds: {
             tokenPage: uiState.messageIds?.tokenPage,
-            lastPage: newMessage.message_id,
+            lastPage: newMessage?.message_id,
             inputPage: undefined
         },
         inputRequestType: undefined

@@ -13,6 +13,10 @@ export interface UiState {
     selectedToken?: Asset;
     orderType?: OrderType;
     inputRequestType?: InputTypeEnum;
+    marketOrder?: {
+        side?: OrderSide;
+        inputAssetAmount?: string;
+    };
     limitOrder?: {
         side?: OrderSide;
         inputAssetAmount?: string;

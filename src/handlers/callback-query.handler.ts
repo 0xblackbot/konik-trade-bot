@@ -4,6 +4,7 @@ import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {OrderSide} from '../enums/order-side.enum';
 import {OrderType} from '../enums/order-type.enum';
 import {cancelLimitOrder} from '../orders/utils/limit-order.utils';
+import {createMarketOrder} from '../orders/utils/market-order.utils';
 import {processOrderInputAmount} from '../orders/utils/order-input-amount.utils';
 import {processTargetPercentPriceChange} from '../orders/utils/percent-price-change.utils';
 import {processOrderSellPercentAmount} from '../orders/utils/sell-percent-input.utils';
@@ -18,6 +19,7 @@ import {sendLimitOrderConfirmationConfirmPage} from '../pages/limit-order/limit-
 import {sendLimitOrderInputAmountPage} from '../pages/limit-order/limit-order-input-amount.page';
 import {sendLimitOrderPage} from '../pages/limit-order/limit-order.page';
 import {sendLimitOrdersPage} from '../pages/limit-order/limit-orders.page';
+import {sendMarketOrderCanceledPage} from '../pages/market-order/market-order-canceled.page';
 import {sendHelpPage} from '../pages/settings/help.page';
 import {sendSeepPhraseWarning} from '../pages/settings/seed-phrase-warning.page';
 import {sendSettingsPage} from '../pages/settings/settings.page';
@@ -143,7 +145,7 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] =
             }
 
             if (query.data === CallbackDataType.RefreshHome) {
-                return updateHomePage(chatId, query.message.message_id);
+                return updateHomePage(chatId, query);
             }
 
             if (query.data === CallbackDataType.ChangeMaxSlippage) {
@@ -160,6 +162,14 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] =
 
             if (query.data === CallbackDataType.CreateLimitOrderConfirm) {
                 return sendLimitOrderConfirmationConfirmPage(chatId);
+            }
+
+            if (query.data === CallbackDataType.CreateMarketOrderCancel) {
+                return sendMarketOrderCanceledPage(chatId);
+            }
+
+            if (query.data === CallbackDataType.CreateMarketOrderConfirm) {
+                return createMarketOrder(chatId);
             }
 
             if (query.data === CallbackDataType.LimitOrderTargetPrice) {

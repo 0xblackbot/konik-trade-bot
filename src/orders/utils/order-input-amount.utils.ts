@@ -1,10 +1,10 @@
-import {createMarketOrder} from './market-order.utils';
 import {OrderSide} from '../../enums/order-side.enum';
 import {OrderType} from '../../enums/order-type.enum';
 import {LITE_CLIENT} from '../../globals';
 import {sendEmptyAssetBalancePage} from '../../pages/empty-asset-balance.page';
 import {sendErrorPage} from '../../pages/error.page';
 import {sendLimitOrderTargetPricePage} from '../../pages/limit-order/limit-order-target-price.page';
+import {sendMarketOrderConfirmationPage} from '../../pages/market-order/market-order-confirmation.page';
 import {getAssetBalance} from '../../utils/asset.utils';
 import {fromNano} from '../../utils/balance.utils';
 import {formatOutputNumber} from '../../utils/format.utils';
@@ -45,7 +45,7 @@ export const processOrderInputAmount = async (
     }
 
     if (orderType === OrderType.Market) {
-        return createMarketOrder(chatId, side, inputAssetAmount);
+        return sendMarketOrderConfirmationPage(chatId, side, inputAssetAmount);
     }
 
     if (orderType === OrderType.Limit) {

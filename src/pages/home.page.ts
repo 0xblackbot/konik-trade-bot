@@ -1,3 +1,5 @@
+import {CallbackQuery} from 'node-telegram-bot-api';
+
 import {RedisUserAssetsService} from '../classes/redis-user-assets.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {BOT, LITE_CLIENT, TON} from '../globals';
@@ -7,12 +9,16 @@ import {fromNano} from '../utils/balance.utils';
 import {formatOutputNumber} from '../utils/format.utils';
 import {getWallet} from '../utils/wallet.utils';
 
-export const updateHomePage = async (chatId: number, messageId: number) => {
+export const updateHomePage = async (chatId: number, query: CallbackQuery) => {
     BOT.editMessageText(await getHomePageMessageText(chatId), {
         chat_id: chatId,
-        message_id: messageId,
+        message_id: query.message?.message_id,
         ...homePageOptions
-    }).catch(error => console.log('BOT.editMessageText error', error));
+    }).catch(error => {
+        console.log('BOT.editMessageText error', error);
+
+        return BOT.answerCallbackQuery(query.id);
+    });
 };
 
 export const sendHomePage = async (chatId: number) =>

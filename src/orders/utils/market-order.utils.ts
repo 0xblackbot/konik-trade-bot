@@ -1,31 +1,41 @@
+import {isDefined} from '@rnw-community/shared';
 import {SwapStatusEnum} from 'rainbow-swap-sdk';
 
 import {RedisOrderHistoryService} from '../../classes/redis-orders-history.service';
+import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
-import {BOT, LITE_CLIENT, TON} from '../../globals';
+import {BOT, LITE_CLIENT} from '../../globals';
 import {send404Page} from '../../pages/404.page';
-import {sendErrorPage} from '../../pages/error.page';
-import {getOrderPageText} from '../../pages/order.page';
-import {getAssetBalance} from '../../utils/asset.utils';
-import {fromNano} from '../../utils/balance.utils';
+import {getMarketOrderPageText} from '../../pages/market-order/market-order.page';
 import {getBestRoute} from '../../utils/best-route.utils';
-import {formatOutputNumber} from '../../utils/format.utils';
-import {getNanoTonSendAmount} from '../../utils/message.utils';
-import {getInputOutputAssets} from '../../utils/ui-state.utils';
+import {getInputOutputAssets, saveLastPage} from '../../utils/ui-state.utils';
 import {getWallet} from '../../utils/wallet.utils';
 
-export const createMarketOrder = async (
-    chatId: number,
-    side: OrderSide,
-    inputAssetAmount: bigint
-) => {
+export const createMarketOrder = async (chatId: number) => {
     await LITE_CLIENT.updateLastBlock();
 
+    const uiState = await RedisUiStateService.getUiState(chatId);
+
+    if (
+        !isDefined(uiState.marketOrder?.side) ||
+        !isDefined(uiState.marketOrder.inputAssetAmount)
+    ) {
+        return send404Page(chatId);
+    }
+
+    await RedisUiStateService.setUiState(chatId, {
+        ...uiState,
+        marketOrder: undefined
+    });
+
     const wallet = await getWallet(chatId);
-    const {inputAsset, outputAsset} = await getInputOutputAssets(chatId, side);
+    const {inputAsset, outputAsset} = await getInputOutputAssets(
+        chatId,
+        uiState.marketOrder.side
+    );
     const bestRoute = await getBestRoute(
         chatId,
-        inputAssetAmount,
+        BigInt(uiState.marketOrder.inputAssetAmount),
         inputAsset.address,
         outputAsset.address
     );
@@ -34,27 +44,12 @@ export const createMarketOrder = async (
         return send404Page(chatId);
     }
 
-    /** check TON balance */
-    const tonBalance = await getAssetBalance(TON, wallet.address);
-    const nanoTonSendAmount = getNanoTonSendAmount(bestRoute.swapMessages);
-
-    if (tonBalance < nanoTonSendAmount) {
-        const nanoDiff = nanoTonSendAmount - tonBalance;
-        const diff = fromNano(nanoDiff, 9);
-
-        return sendErrorPage(
-            chatId,
-            `Not enough TON to pay gas fees.\n` +
-                `You need at least <b>${formatOutputNumber(diff)} TON</b> more.`
-        );
-    }
-
     const transferBoc = await wallet.createTransferBoc(bestRoute.swapMessages);
     const bocHash = await wallet.sendBoc(transferBoc);
 
     const newMessage = await BOT.sendMessage(
         chatId,
-        getOrderPageText(
+        getMarketOrderPageText(
             {
                 timestamp: Date.now(),
                 bocHash,
@@ -69,12 +64,16 @@ export const createMarketOrder = async (
         }
     );
 
+    await saveLastPage(chatId);
+
     await RedisOrderHistoryService.addPendingOrder({
         bocHash,
         chatId,
         messageId: newMessage.message_id,
         expectedMessageCount: bestRoute.messageCount,
         assetAddress:
-            side === OrderSide.Buy ? outputAsset.address : inputAsset.address
+            uiState.marketOrder.side === OrderSide.Buy
+                ? outputAsset.address
+                : inputAsset.address
     });
 };

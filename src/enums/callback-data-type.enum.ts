@@ -11,16 +11,18 @@ export enum CallbackDataType {
 
     MarketBuy = 'MarketBuy_',
     MarketSell = 'MarketSell_',
-
     LimitBuy = 'LimitBuy_',
     LimitSell = 'LimitSell_',
+    PriceChange = 'PriceChange_',
 
     LimitOrder = 'LimitOrder_',
     CancelLimitOrder = 'CancelLimitOrder_',
+
     CreateLimitOrder = 'CreateLimitOrder',
     CreateLimitOrderCancel = 'CreateLimitOrderCancel',
     CreateLimitOrderConfirm = 'CreateLimitOrderConfirm',
     LimitOrderTargetPrice = 'LimitOrderTargetPrice',
 
-    PriceChange = 'PriceChange_'
+    CreateMarketOrderCancel = 'CreateMarketOrderCancel',
+    CreateMarketOrderConfirm = 'CreateMarketOrderConfirm'
 }

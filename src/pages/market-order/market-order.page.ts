@@ -1,8 +1,8 @@
 import {SwapStatusEnum} from 'rainbow-swap-sdk';
 import {SwapHistoryData} from 'rainbow-swap-sdk/dist/interfaces/swap-history-data.interface';
 
-import {formatOutputNumber} from '../utils/format.utils';
-import {clamp} from '../utils/number.utils';
+import {formatOutputNumber} from '../../utils/format.utils';
+import {clamp} from '../../utils/number.utils';
 
 const MIN = 2;
 const MAX = 98;
@@ -19,7 +19,7 @@ const getProgress = (
     return clamp(Math.floor(value), MIN, MAX);
 };
 
-export const getOrderPageText = (
+export const getMarketOrderPageText = (
     historyData: SwapHistoryData,
     expectedMessageCount: number
 ) => {
