@@ -1,20 +1,17 @@
-import {isDefined} from '@rnw-community/shared';
-import {getBestRoute, SwapStatusEnum} from 'rainbow-swap-sdk';
+import {SwapStatusEnum} from 'rainbow-swap-sdk';
 
 import {RedisOrderHistoryService} from '../../classes/redis-orders-history.service';
-import {RedisSettingsService} from '../../classes/redis-settings.service';
-import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
 import {BOT, LITE_CLIENT, TON} from '../../globals';
 import {send404Page} from '../../pages/404.page';
-import {sendEmptyAssetBalancePage} from '../../pages/empty-asset-balance.page';
 import {sendErrorPage} from '../../pages/error.page';
 import {getOrderPageText} from '../../pages/order.page';
-import {RAINBOW_AG_AUTH_HEADER} from '../../secrets';
 import {getAssetBalance} from '../../utils/asset.utils';
 import {fromNano} from '../../utils/balance.utils';
+import {getBestRoute} from '../../utils/best-route.utils';
 import {formatOutputNumber} from '../../utils/format.utils';
 import {getNanoTonSendAmount} from '../../utils/message.utils';
+import {getInputOutputAssets} from '../../utils/ui-state.utils';
 import {getWallet} from '../../utils/wallet.utils';
 
 export const createMarketOrder = async (
@@ -25,63 +22,12 @@ export const createMarketOrder = async (
     await LITE_CLIENT.updateLastBlock();
 
     const wallet = await getWallet(chatId);
-    const settings = await RedisSettingsService.getSettings(chatId);
-    const uiState = await RedisUiStateService.getUiState(chatId);
-
-    if (!isDefined(uiState?.selectedToken)) {
-        return send404Page(chatId);
-    }
-
-    const aAsset = {
-        address: TON,
-        symbol: TON,
-        decimals: 9
-    };
-
-    const bAsset = {
-        address: uiState.selectedToken.data.address,
-        symbol: uiState.selectedToken.data.symbol,
-        decimals: uiState.selectedToken.data.decimals
-    };
-
-    const [inputAsset, outputAsset] =
-        side === OrderSide.Buy ? [aAsset, bAsset] : [bAsset, aAsset];
-
-    /** check input balance */
-    const inputAssetBalance = await getAssetBalance(
-        inputAsset.address,
-        wallet.address
-    );
-
-    if (inputAssetBalance === 0n) {
-        return sendEmptyAssetBalancePage(
-            chatId,
-            uiState.selectedToken.data.symbol,
-            wallet.address.toString()
-        );
-    }
-
-    if (inputAssetBalance < inputAssetAmount) {
-        const balance = fromNano(inputAssetBalance, inputAsset.decimals);
-
-        return sendErrorPage(
-            chatId,
-            `You don't have enough ${inputAsset.symbol}.\n` +
-                `Wallet balance: <b>${formatOutputNumber(balance)} ${inputAsset.symbol}</b>`
-        );
-    }
-
+    const {inputAsset, outputAsset} = await getInputOutputAssets(chatId, side);
     const bestRoute = await getBestRoute(
-        {
-            inputAssetAmount: inputAssetAmount.toString(),
-            inputAssetAddress: inputAsset.address,
-            outputAssetAddress: outputAsset.address,
-            maxDepth: 1,
-            maxSplits: 1,
-            senderAddress: wallet.address.toString(),
-            maxSlippage: settings.maxSlippage
-        },
-        RAINBOW_AG_AUTH_HEADER
+        chatId,
+        inputAssetAmount,
+        inputAsset.address,
+        outputAsset.address
     );
 
     if (bestRoute.displayData.routes.length === 0) {
@@ -128,6 +74,7 @@ export const createMarketOrder = async (
         chatId,
         messageId: newMessage.message_id,
         expectedMessageCount: bestRoute.messageCount,
-        assetAddress: uiState.selectedToken.data.address
+        assetAddress:
+            side === OrderSide.Buy ? outputAsset.address : inputAsset.address
     });
 };

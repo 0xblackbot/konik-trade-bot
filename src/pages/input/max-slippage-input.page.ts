@@ -1,10 +1,7 @@
-import {isDefined} from '@rnw-community/shared';
-
 import {DEFAULT_SETTINGS} from '../../classes/redis-settings.service';
-import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../../enums/input-type.enum';
 import {BOT} from '../../globals';
-import {deleteMessageSafe} from '../../utils/bot.utils';
+import {saveInputPage} from '../../utils/ui-state.utils';
 
 export const sendMaxSlippageInputPage = async (chatId: number) => {
     const newMessage = await BOT.sendMessage(
@@ -15,17 +12,5 @@ export const sendMaxSlippageInputPage = async (chatId: number) => {
         {parse_mode: 'HTML', reply_markup: {force_reply: true}}
     );
 
-    const uiState = await RedisUiStateService.getUiState(chatId);
-
-    if (isDefined(uiState?.inputRequest)) {
-        await deleteMessageSafe(chatId, uiState.inputRequest.messageId);
-    }
-
-    await RedisUiStateService.setUiState(chatId, {
-        ...uiState,
-        inputRequest: {
-            type: InputTypeEnum.MaxSlippage,
-            messageId: newMessage.message_id
-        }
-    });
+    await saveInputPage(chatId, InputTypeEnum.MaxSlippage, newMessage);
 };

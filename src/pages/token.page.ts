@@ -10,9 +10,10 @@ import {sendErrorPage} from './error.page';
 import {getAsset} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
-import {deleteMessageSafe} from '../utils/bot.utils';
 import {formatOutputNumber} from '../utils/format.utils';
+import {saveTokenPage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
+import {CLOSE_BUTTON} from './buttons/close.button';
 
 export const sendTokenPage = async (message: Message) =>
     sendTokenPageInfo(message).catch(error => {
@@ -52,6 +53,18 @@ const sendTokenPageInfo = async (message: Message) => {
         assetBalance: formatOutputNumber(fromNano(assetBalance, asset.decimals))
     };
 
+    /** save the last selected token to be able to create order */
+    const uiState = await RedisUiStateService.getUiState(message.chat.id);
+
+    /** update ui state */
+    await RedisUiStateService.setUiState(message.chat.id, {
+        ...uiState,
+        selectedToken: {
+            data: asset,
+            orderType: OrderType.Market
+        }
+    });
+
     const newMessage = await BOT.sendMessage(
         message.chat.id,
         `<b>${asset.symbol}</b> - ${asset.name} - <code>${asset.address}</code>\n` +
@@ -65,7 +78,7 @@ const sendTokenPageInfo = async (message: Message) => {
             `  ${displayData.tonBalance} TON\n` +
             `  ${displayData.assetBalance} ${asset.symbol}\n` +
             '\n' +
-            'To buy press one of the buttons below.',
+            'To <b>instantly</b> buy or sell, press one of the buttons below, or create a limit order.',
         {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
@@ -103,43 +116,17 @@ const sendTokenPageInfo = async (message: Message) => {
                     ],
                     [
                         {
-                            text: 'Create Limit Order 📈',
+                            text: 'Create Limit Order',
                             callback_data: CallbackDataType.CreateLimitOrder
                         }
                     ],
-                    [{text: 'Close', callback_data: CallbackDataType.Close}]
+                    CLOSE_BUTTON
                 ]
             }
         }
     );
 
-    /** save the last selected token to be able to create order */
-    const uiState = await RedisUiStateService.getUiState(message.chat.id);
-
-    /** clear previous input/token messages */
-    await Promise.all([
-        deleteMessageSafe(
-            message.chat.id,
-            uiState?.selectedToken?.tokenPageMessageId
-        ),
-        deleteMessageSafe(
-            message.chat.id,
-            uiState?.selectedToken?.limitOrderPageMessageId
-        ),
-        deleteMessageSafe(message.chat.id, uiState?.inputRequest?.messageId)
-    ]);
-
-    /** update ui state */
-    await RedisUiStateService.setUiState(message.chat.id, {
-        ...uiState,
-        selectedToken: {
-            data: asset,
-            orderType: OrderType.Market,
-            tokenPageMessageId: newMessage.message_id,
-            limitOrderPageMessageId: undefined
-        },
-        inputRequest: undefined
-    });
+    await saveTokenPage(message.chat.id, newMessage);
 };
 
 const getPricesDisplayData = (asset: Asset) => {

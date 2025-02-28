@@ -1,5 +1,5 @@
-import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {BOT} from '../globals';
+import {CLOSE_BUTTON} from './buttons/close.button';
 
 export const sendSeepPhraseWarning = async (chatId: number) =>
     BOT.sendMessage(
@@ -14,9 +14,7 @@ export const sendSeepPhraseWarning = async (chatId: number) =>
         {
             parse_mode: 'HTML',
             reply_markup: {
-                inline_keyboard: [
-                    [{text: 'Close', callback_data: CallbackDataType.Close}]
-                ]
+                inline_keyboard: [CLOSE_BUTTON]
             }
         }
     );

@@ -4,8 +4,6 @@ import {BOT} from '../globals';
 
 export const deleteMessageSafe = (chatId: number, messageId?: number) => {
     if (isDefined(messageId)) {
-        return BOT.deleteMessage(chatId, messageId).catch(error =>
-            console.log('BOT.deleteMessage error', error)
-        );
+        return BOT.deleteMessage(chatId, messageId).catch(() => 0);
     }
 };

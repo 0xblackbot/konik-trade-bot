@@ -17,7 +17,7 @@ export abstract class RedisUiStateService {
         if (isDefined(serializedData)) {
             return JSON.parse(serializedData) as UiState;
         } else {
-            return undefined;
+            return {};
         }
     };
 

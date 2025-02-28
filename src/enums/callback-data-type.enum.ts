@@ -16,5 +16,24 @@ export enum CallbackDataType {
     Sell_100 = 'Sell_100',
     Sell_X = 'Sell_X',
 
-    CreateLimitOrder = 'CreateLimitOrder'
+    LimitOrder = 'LimitOrder_',
+    CancelLimitOrder = 'CancelLimitOrder_',
+    CreateLimitOrder = 'CreateLimitOrder',
+    CreateLimitOrderCancel = 'CreateLimitOrderCancel',
+    CreateLimitOrderConfirm = 'CreateLimitOrderConfirm',
+    LimitOrderTargetPrice = 'LimitOrderTargetPrice',
+
+    Price_minus5 = 'Price_minus5',
+    Price_minus10 = 'Price_minus10',
+    Price_minus20 = 'Price_minus20',
+    Price_minus30 = 'Price_minus30',
+    Price_minus40 = 'Price_minus40',
+    Price_minus50 = 'Price_minus50',
+
+    Price_plus20 = 'Price_plus20',
+    Price_plus50 = 'Price_plus50',
+    Price_plus70 = 'Price_plus70',
+    Price_plus100 = 'Price_plus100',
+    Price_plus200 = 'Price_plus200',
+    Price_plus300 = 'Price_plus300'
 }

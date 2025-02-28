@@ -20,7 +20,7 @@ export const processOrderSellPercentAmount = async (
 
     const uiState = await RedisUiStateService.getUiState(chatId);
 
-    if (!isDefined(uiState?.selectedToken)) {
+    if (!isDefined(uiState.selectedToken)) {
         return send404Page(chatId);
     }
 

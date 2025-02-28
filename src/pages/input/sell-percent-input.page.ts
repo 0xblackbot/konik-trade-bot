@@ -4,7 +4,7 @@ import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../../enums/input-type.enum';
 import {BOT, LITE_CLIENT} from '../../globals';
 import {getAssetBalance} from '../../utils/asset.utils';
-import {deleteMessageSafe} from '../../utils/bot.utils';
+import {saveInputPage} from '../../utils/ui-state.utils';
 import {getWallet} from '../../utils/wallet.utils';
 import {send404Page} from '../404.page';
 import {sendEmptyAssetBalancePage} from '../empty-asset-balance.page';
@@ -15,7 +15,7 @@ export const sendSellPercentInputPage = async (chatId: number) => {
     const wallet = await getWallet(chatId);
     const uiState = await RedisUiStateService.getUiState(chatId);
 
-    if (!isDefined(uiState?.selectedToken)) {
+    if (!isDefined(uiState.selectedToken)) {
         return send404Page(chatId);
     }
 
@@ -40,19 +40,9 @@ export const sendSellPercentInputPage = async (chatId: number) => {
 
     const newMessage = await BOT.sendMessage(
         chatId,
-        `Reply with the amount you wish to sell (0 - 100 %, Example: 25.5):`,
-        {reply_markup: {force_reply: true}}
+        `Enter the desired <b>% of ${inputAsset.symbol}</b> you want to sell (0 - 100 %, Example: 25.5):`,
+        {parse_mode: 'HTML', reply_markup: {force_reply: true}}
     );
 
-    if (isDefined(uiState?.inputRequest)) {
-        await deleteMessageSafe(chatId, uiState.inputRequest.messageId);
-    }
-
-    await RedisUiStateService.setUiState(chatId, {
-        ...uiState,
-        inputRequest: {
-            type: InputTypeEnum.SellPercent,
-            messageId: newMessage.message_id
-        }
-    });
+    await saveInputPage(chatId, InputTypeEnum.SellPercent, newMessage);
 };
