@@ -2,10 +2,10 @@ import {TelegramEvents} from 'node-telegram-bot-api';
 
 import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../enums/input-type.enum';
-import {buyAmountInputHandler} from '../pages/input/buy-amount-input.handler';
-import {limitOrderTargetPriceHandler} from '../pages/input/limit-order-target-price.handler';
-import {maxSlippageInputHandler} from '../pages/input/max-slippage-input.handler';
-import {sellPercentInputHandler} from '../pages/input/sell-percent-input.handler';
+import {buyAmountInputHandler} from '../pages/inputs/buy-amount-input.handler';
+import {limitOrderTargetPriceHandler} from '../pages/inputs/limit-order-target-price.handler';
+import {maxSlippageInputHandler} from '../pages/inputs/max-slippage-input.handler';
+import {sellPercentInputHandler} from '../pages/inputs/sell-percent-input.handler';
 
 export const messageReplyHandler: TelegramEvents['message'] = async message => {
     const uiState = await RedisUiStateService.getUiState(message.chat.id);

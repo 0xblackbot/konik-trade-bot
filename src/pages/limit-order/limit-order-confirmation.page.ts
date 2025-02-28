@@ -1,12 +1,12 @@
 import {isDefined} from '@rnw-community/shared';
 
-import {send404Page} from './404.page';
-import {BOT} from '../globals';
 import {getLimitOrderText} from './limit-order.page';
-import {RedisUiStateService} from '../classes/redis-ui-state.service';
-import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {LimitOrder} from '../orders/interfaces/limit-order.interface';
-import {saveLastPage} from '../utils/ui-state.utils';
+import {RedisUiStateService} from '../../classes/redis-ui-state.service';
+import {CallbackDataType} from '../../enums/callback-data-type.enum';
+import {BOT} from '../../globals';
+import {LimitOrder} from '../../orders/interfaces/limit-order.interface';
+import {saveLastPage} from '../../utils/ui-state.utils';
+import {send404Page} from '../404.page';
 
 export const sendLimitOrderConfirmationPage = async (
     chatId: number,

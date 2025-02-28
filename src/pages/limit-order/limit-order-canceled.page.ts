@@ -1,7 +1,7 @@
-import {RedisUiStateService} from '../classes/redis-ui-state.service';
-import {BOT} from '../globals';
-import {saveLastPage} from '../utils/ui-state.utils';
-import {CLOSE_BUTTON} from './buttons/close.button';
+import {RedisUiStateService} from '../../classes/redis-ui-state.service';
+import {BOT} from '../../globals';
+import {saveLastPage} from '../../utils/ui-state.utils';
+import {CLOSE_BUTTON} from '../buttons/close.button';
 
 export const sendLimitOrderCanceledPage = async (chatId: number) => {
     const uiState = await RedisUiStateService.getUiState(chatId);

@@ -3,10 +3,10 @@ import {TelegramEvents} from 'node-telegram-bot-api';
 import {CommandEnum} from '../enums/command.enum';
 import {BOT} from '../globals';
 import {sendChatPage} from '../pages/chat.page';
-import {sendHelpPage} from '../pages/help.page';
 import {sendHomePage} from '../pages/home.page';
-import {sendSeepPhraseWarning} from '../pages/seed-phrase-reveal.page';
-import {sendSettingsPage} from '../pages/settings.page';
+import {sendHelpPage} from '../pages/settings/help.page';
+import {sendSeepPhraseReveal} from '../pages/settings/seed-phrase-reveal.page';
+import {sendSettingsPage} from '../pages/settings/settings.page';
 import {sendTokenPage} from '../pages/token.page';
 
 export const messageHandler: TelegramEvents['message'] = async message => {
@@ -21,7 +21,7 @@ export const messageHandler: TelegramEvents['message'] = async message => {
     }
 
     if (command === CommandEnum.RevealSeedPhrase) {
-        return sendSeepPhraseWarning(message.chat.id);
+        return sendSeepPhraseReveal(message.chat.id);
     }
 
     if (command === CommandEnum.Help) {

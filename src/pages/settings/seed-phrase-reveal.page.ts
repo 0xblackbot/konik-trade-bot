@@ -1,8 +1,8 @@
-import {RedisWalletService} from '../classes/redis-wallet.service';
-import {BOT} from '../globals';
-import {CLOSE_BUTTON} from './buttons/close.button';
+import {RedisWalletService} from '../../classes/redis-wallet.service';
+import {BOT} from '../../globals';
+import {CLOSE_BUTTON} from '../buttons/close.button';
 
-export const sendSeepPhraseWarning = async (chatId: number) => {
+export const sendSeepPhraseReveal = async (chatId: number) => {
     const mnemonic = await RedisWalletService.getMnemonic(chatId);
 
     return BOT.sendMessage(

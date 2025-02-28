@@ -1,5 +1,5 @@
-import {BOT} from '../globals';
-import {CLOSE_BUTTON} from './buttons/close.button';
+import {BOT} from '../../globals';
+import {CLOSE_BUTTON} from '../buttons/close.button';
 
 export const sendSeepPhraseWarning = async (chatId: number) =>
     BOT.sendMessage(

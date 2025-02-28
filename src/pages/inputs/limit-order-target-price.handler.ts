@@ -3,7 +3,7 @@ import {OrderSide} from '../../enums/order-side.enum';
 import {LITE_CLIENT} from '../../globals';
 import {send404Page} from '../404.page';
 import {sendErrorPage} from '../error.page';
-import {sendLimitOrderConfirmationPage} from '../limit-order-confirmation.page';
+import {sendLimitOrderConfirmationPage} from '../limit-order/limit-order-confirmation.page';
 
 export const limitOrderTargetPriceHandler = async (
     chatId: number,

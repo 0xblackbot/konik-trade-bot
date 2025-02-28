@@ -1,11 +1,11 @@
 import {isDefined} from '@rnw-community/shared';
 
-import {RedisUiStateService} from '../classes/redis-ui-state.service';
-import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {BOT} from '../globals';
-import {send404Page} from './404.page';
-import {saveLastPage} from '../utils/ui-state.utils';
-import {CLOSE_BUTTON} from './buttons/close.button';
+import {RedisUiStateService} from '../../classes/redis-ui-state.service';
+import {CallbackDataType} from '../../enums/callback-data-type.enum';
+import {BOT} from '../../globals';
+import {saveLastPage} from '../../utils/ui-state.utils';
+import {send404Page} from '../404.page';
+import {CLOSE_BUTTON} from '../buttons/close.button';
 
 export const sendLimitOrderInputAmountPage = async (chatId: number) => {
     const uiState = await RedisUiStateService.getUiState(chatId);

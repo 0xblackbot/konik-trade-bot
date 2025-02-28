@@ -4,7 +4,7 @@ import {OrderType} from '../../enums/order-type.enum';
 import {LITE_CLIENT} from '../../globals';
 import {sendEmptyAssetBalancePage} from '../../pages/empty-asset-balance.page';
 import {sendErrorPage} from '../../pages/error.page';
-import {sendLimitOrderTargetPricePage} from '../../pages/limit-order-target-price.page';
+import {sendLimitOrderTargetPricePage} from '../../pages/limit-order/limit-order-target-price.page';
 import {getAssetBalance} from '../../utils/asset.utils';
 import {fromNano} from '../../utils/balance.utils';
 import {formatOutputNumber} from '../../utils/format.utils';

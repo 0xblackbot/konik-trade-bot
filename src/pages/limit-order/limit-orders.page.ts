@@ -1,11 +1,11 @@
-import {RedisLimitOrdersService} from '../classes/redis-limit-orders.service';
-import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {OrderSide} from '../enums/order-side.enum';
-import {BOT} from '../globals';
-import {fromNano} from '../utils/balance.utils';
-import {formatOutputNumber} from '../utils/format.utils';
-import {saveLastPage} from '../utils/ui-state.utils';
-import {CLOSE_BUTTON} from './buttons/close.button';
+import {RedisLimitOrdersService} from '../../classes/redis-limit-orders.service';
+import {CallbackDataType} from '../../enums/callback-data-type.enum';
+import {OrderSide} from '../../enums/order-side.enum';
+import {BOT} from '../../globals';
+import {fromNano} from '../../utils/balance.utils';
+import {formatOutputNumber} from '../../utils/format.utils';
+import {saveLastPage} from '../../utils/ui-state.utils';
+import {CLOSE_BUTTON} from '../buttons/close.button';
 
 export const sendLimitOrdersPage = async (chatId: number) => {
     const orders = await RedisLimitOrdersService.getUserLimitOrders(chatId);

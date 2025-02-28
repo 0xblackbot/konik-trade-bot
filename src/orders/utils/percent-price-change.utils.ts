@@ -1,7 +1,7 @@
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
 import {send404Page} from '../../pages/404.page';
-import {sendLimitOrderConfirmationPage} from '../../pages/limit-order-confirmation.page';
+import {sendLimitOrderConfirmationPage} from '../../pages/limit-order/limit-order-confirmation.page';
 
 export const processTargetPercentPriceChange = async (
     chatId: number,

@@ -1,8 +1,8 @@
-import {RedisSettingsService} from '../classes/redis-settings.service';
-import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {BOT} from '../globals';
-import {formatOutputNumber} from '../utils/format.utils';
-import {CLOSE_BUTTON} from './buttons/close.button';
+import {RedisSettingsService} from '../../classes/redis-settings.service';
+import {CallbackDataType} from '../../enums/callback-data-type.enum';
+import {BOT} from '../../globals';
+import {formatOutputNumber} from '../../utils/format.utils';
+import {CLOSE_BUTTON} from '../buttons/close.button';
 
 export const sendSettingsPage = async (chatId: number) => {
     const settings = await RedisSettingsService.getSettings(chatId);
