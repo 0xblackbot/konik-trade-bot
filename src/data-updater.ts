@@ -13,22 +13,23 @@ const app = async () => {
     while (true) {
         await sleep(UPDATE_INTERVAL);
 
-        const pendingOrders = await RedisOrderHistoryService.getPendingOrders();
+        const pendingTransactions =
+            await RedisOrderHistoryService.getPendingTransactions();
 
         await Promise.all(
-            pendingOrders.map(async pendingOrder => {
+            pendingTransactions.map(async pendingTransaction => {
                 const historyData = await getSwapHistoryData({
-                    bocHash: pendingOrder.bocHash
+                    bocHash: pendingTransaction.bocHash
                 });
 
                 await BOT.editMessageText(
                     getMarketOrderPageText(
                         historyData,
-                        pendingOrder.expectedMessageCount
+                        pendingTransaction.expectedMessageCount
                     ),
                     {
-                        chat_id: pendingOrder.chatId,
-                        message_id: pendingOrder.messageId,
+                        chat_id: pendingTransaction.chatId,
+                        message_id: pendingTransaction.messageId,
                         parse_mode: 'HTML',
                         disable_web_page_preview: true
                     }
@@ -38,13 +39,13 @@ const app = async () => {
 
                 // completed
                 if (historyData.status !== SwapStatusEnum.Pending) {
-                    await RedisOrderHistoryService.deletePendingOrder(
-                        pendingOrder
+                    await RedisOrderHistoryService.deletePendingTransaction(
+                        pendingTransaction
                     );
 
                     await RedisUserAssetsService.addUserAsset(
-                        pendingOrder.chatId,
-                        pendingOrder.assetAddress
+                        pendingTransaction.chatId,
+                        pendingTransaction.assetAddress
                     );
                 }
             })

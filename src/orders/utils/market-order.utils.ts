@@ -66,7 +66,7 @@ export const createMarketOrder = async (chatId: number) => {
 
     await saveLastPage(chatId);
 
-    await RedisOrderHistoryService.addPendingOrder({
+    await RedisOrderHistoryService.addPendingTransaction({
         bocHash,
         chatId,
         messageId: newMessage.message_id,

@@ -1,28 +1,31 @@
 import {REDIS_CLIENT} from '../globals';
-import {PendingOrder} from '../interfaces/pending-order.interface';
+import {PendingTransaction} from '../interfaces/pending-transaction.interface';
 
 export abstract class RedisOrderHistoryService {
     private static REDIS_KEYS = {
-        pendingOrdersRecord: 'KONIK/pendingOrdersRecord'
+        pendingTransactionsRecord: 'KONIK/pendingTransactionsRecord'
     };
 
-    public static getPendingOrders = async () => {
+    public static getPendingTransactions = async () => {
         const serializedData = await REDIS_CLIENT.hgetall(
-            this.REDIS_KEYS.pendingOrdersRecord
+            this.REDIS_KEYS.pendingTransactionsRecord
         );
 
-        return Object.values(serializedData).map<PendingOrder>(value =>
+        return Object.values(serializedData).map<PendingTransaction>(value =>
             JSON.parse(value)
         );
     };
 
-    public static addPendingOrder = (value: PendingOrder) =>
+    public static addPendingTransaction = (value: PendingTransaction) =>
         REDIS_CLIENT.hset(
-            this.REDIS_KEYS.pendingOrdersRecord,
+            this.REDIS_KEYS.pendingTransactionsRecord,
             value.bocHash,
             JSON.stringify(value)
         );
 
-    public static deletePendingOrder = (value: PendingOrder) =>
-        REDIS_CLIENT.hdel(this.REDIS_KEYS.pendingOrdersRecord, value.bocHash);
+    public static deletePendingTransaction = (value: PendingTransaction) =>
+        REDIS_CLIENT.hdel(
+            this.REDIS_KEYS.pendingTransactionsRecord,
+            value.bocHash
+        );
 }
