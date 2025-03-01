@@ -1,5 +1,4 @@
-import {getBestRoute as default_getBestRoute} from 'rainbow-swap-sdk';
-
+import {getBestRoute as default_getBestRoute} from './api.utils';
 import {RAINBOW_AG_AUTH_HEADER} from '../secrets';
 import {getWallet} from './wallet.utils';
 import {RedisSettingsService} from '../classes/redis-settings.service';

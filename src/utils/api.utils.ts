@@ -1,5 +1,10 @@
 import axios from 'axios';
-import {Asset, AssetsListParams} from 'rainbow-swap-sdk';
+import {
+    Asset,
+    AssetsListParams,
+    BestRouteParams,
+    BestRouteResponse
+} from 'rainbow-swap-sdk';
 
 const API = axios.create({
     baseURL: 'https://api.rainbow.ag/api'
@@ -13,3 +18,11 @@ export const getAsset = async (address: string): Promise<Asset | undefined> => {
 
     return result[0];
 };
+
+export const getBestRoute = (params: BestRouteParams, authTokens?: string) =>
+    API.get<BestRouteResponse>('/best-route', {
+        params,
+        headers: {
+            Authorization: authTokens
+        }
+    }).then(response => response.data);
