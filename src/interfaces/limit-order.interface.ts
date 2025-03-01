@@ -1,10 +1,12 @@
 import {Asset} from 'rainbow-swap-sdk/dist/types/asset.type';
 
-import {OrderSide} from '../../enums/order-side.enum';
+import {LimitOrderStatus} from '../enums/limit-order-status.enum';
+import {OrderSide} from '../enums/order-side.enum';
 
 export interface LimitOrder {
     id: number;
     chatId: number;
+    status: LimitOrderStatus;
     side: OrderSide;
     asset: Asset;
     inputAssetAmount: string;

@@ -1,8 +1,8 @@
 import {isDefined} from '@rnw-community/shared';
 
-import {RedisLimitOrdersService} from '../../classes/redis-limit-orders.service';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {BOT} from '../../globals';
+import {addUserLimitOrder} from '../../utils/order-utils/limit-order.utils';
 import {saveLastPage} from '../../utils/ui-state.utils';
 import {send404Page} from '../404.page';
 import {CLOSE_BUTTON} from '../buttons/close.button';
@@ -20,15 +20,14 @@ export const sendLimitOrderConfirmationConfirmPage = async (chatId: number) => {
         return send404Page(chatId);
     }
 
-    await RedisLimitOrdersService.addUserLimitOrder({
-        id: 0,
+    await addUserLimitOrder(
         chatId,
-        side: uiState.limitOrder.side,
-        asset: uiState.selectedToken,
-        inputAssetAmount: uiState.limitOrder.inputAssetAmount,
-        targetOutputAssetAmount: uiState.limitOrder.targetOutputAssetAmount,
-        targetPrice: uiState.limitOrder.targetPrice
-    });
+        uiState.limitOrder.side,
+        uiState.selectedToken,
+        uiState.limitOrder.inputAssetAmount,
+        uiState.limitOrder.targetOutputAssetAmount,
+        uiState.limitOrder.targetPrice
+    );
 
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
@@ -37,7 +36,7 @@ export const sendLimitOrderConfirmationConfirmPage = async (chatId: number) => {
 
     const newMessage = await BOT.sendMessage(
         chatId,
-        'Limit Order <b>created</b>',
+        'Limit Order <b>Created</b>',
         {
             parse_mode: 'HTML',
             reply_markup: {

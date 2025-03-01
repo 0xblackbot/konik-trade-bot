@@ -4,7 +4,7 @@ import {RedisLimitOrdersService} from '../../classes/redis-limit-orders.service'
 import {CallbackDataType} from '../../enums/callback-data-type.enum';
 import {OrderSide} from '../../enums/order-side.enum';
 import {BOT} from '../../globals';
-import {LimitOrder} from '../../orders/interfaces/limit-order.interface';
+import {LimitOrder} from '../../interfaces/limit-order.interface';
 import {fromNano} from '../../utils/balance.utils';
 import {formatOutputNumber} from '../../utils/format.utils';
 import {saveLastPage} from '../../utils/ui-state.utils';

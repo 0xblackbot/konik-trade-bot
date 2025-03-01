@@ -13,7 +13,7 @@ export const sendLimitOrderCanceledPage = async (chatId: number) => {
 
     const newMessage = await BOT.sendMessage(
         chatId,
-        'Limit Order <b>canceled</b>',
+        'Limit Order <b>Canceled</b>',
         {
             parse_mode: 'HTML',
             reply_markup: {

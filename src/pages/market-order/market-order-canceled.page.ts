@@ -13,7 +13,7 @@ export const sendMarketOrderCanceledPage = async (chatId: number) => {
 
     const newMessage = await BOT.sendMessage(
         chatId,
-        'Market Order <b>canceled</b>',
+        'Market Order <b>Canceled</b>',
         {
             parse_mode: 'HTML',
             reply_markup: {

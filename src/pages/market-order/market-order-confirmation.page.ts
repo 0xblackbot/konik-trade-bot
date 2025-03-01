@@ -1,15 +1,15 @@
+import {isDefined} from '@rnw-community/shared';
+
 import {RedisSettingsService} from '../../classes/redis-settings.service';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {CallbackDataType} from '../../enums/callback-data-type.enum';
 import {OrderSide} from '../../enums/order-side.enum';
-import {BOT, LITE_CLIENT, TON} from '../../globals';
-import {getAssetBalance} from '../../utils/asset.utils';
-import {fromNano} from '../../utils/balance.utils';
+import {BOT, LITE_CLIENT} from '../../globals';
+import {getInputOutputAssets} from '../../utils/asset.utils';
 import {getBestRoute} from '../../utils/best-route.utils';
 import {formatOutputNumber} from '../../utils/format.utils';
-import {getNanoTonSendAmount} from '../../utils/message.utils';
-import {getInputOutputAssets, saveLastPage} from '../../utils/ui-state.utils';
-import {getWallet} from '../../utils/wallet.utils';
+import {saveLastPage} from '../../utils/ui-state.utils';
+import {getGasValidationError} from '../../utils/validation.utils';
 import {send404Page} from '../404.page';
 import {sendErrorPage} from '../error.page';
 
@@ -29,9 +29,11 @@ export const sendMarketOrderConfirmationPage = async (
         }
     });
 
-    const wallet = await getWallet(chatId);
     const settings = await RedisSettingsService.getSettings(chatId);
-    const {inputAsset, outputAsset} = await getInputOutputAssets(chatId, side);
+    const {inputAsset, outputAsset} = getInputOutputAssets(
+        side,
+        uiState.selectedToken
+    );
     const bestRoute = await getBestRoute(
         chatId,
         inputAssetAmount,
@@ -44,18 +46,10 @@ export const sendMarketOrderConfirmationPage = async (
     }
 
     /** check TON balance */
-    const tonBalance = await getAssetBalance(TON, wallet.address);
-    const nanoTonSendAmount = getNanoTonSendAmount(bestRoute.swapMessages);
+    const error = await getGasValidationError(chatId, bestRoute);
 
-    if (tonBalance < nanoTonSendAmount) {
-        const nanoDiff = nanoTonSendAmount - tonBalance;
-        const diff = fromNano(nanoDiff, 9);
-
-        return sendErrorPage(
-            chatId,
-            `Not enough TON to pay gas fees.\n` +
-                `You need at least <b>${formatOutputNumber(diff)} TON</b> more.`
-        );
+    if (isDefined(error)) {
+        return sendErrorPage(chatId, error);
     }
 
     const newMessage = await BOT.sendMessage(

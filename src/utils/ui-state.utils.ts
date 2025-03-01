@@ -1,37 +1,9 @@
-import {isDefined} from '@rnw-community/shared';
 import {Message} from 'node-telegram-bot-api';
 
-import {RedisUiStateService} from '../classes/redis-ui-state.service';
-import {OrderSide} from '../enums/order-side.enum';
-import {TON} from '../globals';
 import {deleteMessageSafe} from './bot.utils';
+import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../enums/input-type.enum';
 import {OrderType} from '../enums/order-type.enum';
-
-export const getInputOutputAssets = async (chatId: number, side: OrderSide) => {
-    const uiState = await RedisUiStateService.getUiState(chatId);
-
-    if (!isDefined(uiState.selectedToken)) {
-        throw new Error(`Cannot find uiState.selectedToken`);
-    }
-
-    const aAsset = {
-        address: TON,
-        symbol: TON,
-        decimals: 9
-    };
-
-    const bAsset = {
-        address: uiState.selectedToken.address,
-        symbol: uiState.selectedToken.symbol,
-        decimals: uiState.selectedToken.decimals
-    };
-
-    return {
-        inputAsset: side === OrderSide.Buy ? aAsset : bAsset,
-        outputAsset: side === OrderSide.Buy ? bAsset : aAsset
-    };
-};
 
 export const saveTokenPage = async (chatId: number, newMessage: Message) => {
     const uiState = await RedisUiStateService.getUiState(chatId);

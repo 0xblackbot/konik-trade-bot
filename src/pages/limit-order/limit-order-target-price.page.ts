@@ -2,10 +2,11 @@ import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {CallbackDataType} from '../../enums/callback-data-type.enum';
 import {OrderSide} from '../../enums/order-side.enum';
 import {BOT} from '../../globals';
+import {getInputOutputAssets} from '../../utils/asset.utils';
 import {getBestRoute} from '../../utils/best-route.utils';
 import {formatOutputNumber} from '../../utils/format.utils';
 import {getAssetPrice} from '../../utils/price.utils';
-import {getInputOutputAssets, saveLastPage} from '../../utils/ui-state.utils';
+import {saveLastPage} from '../../utils/ui-state.utils';
 import {send404Page} from '../404.page';
 import {CLOSE_BUTTON} from '../buttons/close.button';
 
@@ -16,7 +17,10 @@ export const sendLimitOrderTargetPricePage = async (
 ) => {
     const uiState = await RedisUiStateService.getUiState(chatId);
 
-    const {inputAsset, outputAsset} = await getInputOutputAssets(chatId, side);
+    const {inputAsset, outputAsset} = getInputOutputAssets(
+        side,
+        uiState.selectedToken
+    );
 
     const bestRoute = await getBestRoute(
         chatId,

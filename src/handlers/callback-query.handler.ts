@@ -3,11 +3,6 @@ import {TelegramEvents} from 'node-telegram-bot-api';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {OrderSide} from '../enums/order-side.enum';
 import {OrderType} from '../enums/order-type.enum';
-import {cancelLimitOrder} from '../orders/utils/limit-order.utils';
-import {createMarketOrder} from '../orders/utils/market-order.utils';
-import {processOrderInputAmount} from '../orders/utils/order-input-amount.utils';
-import {processTargetPercentPriceChange} from '../orders/utils/percent-price-change.utils';
-import {processOrderSellPercentAmount} from '../orders/utils/sell-percent-input.utils';
 import {sendBuySellPage} from '../pages/buy-n-sell.page';
 import {updateHomePage} from '../pages/home.page';
 import {sendBuyAmountInputPage} from '../pages/inputs/buy-amount-input.page';
@@ -26,6 +21,11 @@ import {sendSettingsPage} from '../pages/settings/settings.page';
 import {sendUnavailablePage} from '../pages/unavailable.page';
 import {toNano} from '../utils/balance.utils';
 import {deleteMessageSafe} from '../utils/bot.utils';
+import {cancelLimitOrder} from '../utils/order-utils/limit-order.utils';
+import {createMarketOrder} from '../utils/order-utils/market-order.utils';
+import {processOrderInputAmount} from '../utils/order-utils/order-input-amount.utils';
+import {processTargetPercentPriceChange} from '../utils/order-utils/percent-price-change.utils';
+import {processOrderSellPercentAmount} from '../utils/order-utils/sell-percent-input.utils';
 import {saveOrderType} from '../utils/ui-state.utils';
 
 export const callbackQueryHandler: TelegramEvents['callback_query'] =

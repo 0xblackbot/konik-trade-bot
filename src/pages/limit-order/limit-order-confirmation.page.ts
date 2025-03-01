@@ -3,8 +3,9 @@ import {isDefined} from '@rnw-community/shared';
 import {getLimitOrderText} from './limit-order.page';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {CallbackDataType} from '../../enums/callback-data-type.enum';
+import {LimitOrderStatus} from '../../enums/limit-order-status.enum';
 import {BOT} from '../../globals';
-import {LimitOrder} from '../../orders/interfaces/limit-order.interface';
+import {LimitOrder} from '../../interfaces/limit-order.interface';
 import {saveLastPage} from '../../utils/ui-state.utils';
 import {send404Page} from '../404.page';
 
@@ -35,6 +36,7 @@ export const sendLimitOrderConfirmationPage = async (
     const orderRequest: LimitOrder = {
         id: 0,
         chatId,
+        status: LimitOrderStatus.Active,
         side: uiState.limitOrder.side,
         asset: uiState.selectedToken,
         inputAssetAmount: uiState.limitOrder.inputAssetAmount,

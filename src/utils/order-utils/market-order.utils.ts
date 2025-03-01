@@ -4,12 +4,14 @@ import {SwapStatusEnum} from 'rainbow-swap-sdk';
 import {RedisOrderHistoryService} from '../../classes/redis-orders-history.service';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
+import {OrderType} from '../../enums/order-type.enum';
 import {BOT, LITE_CLIENT} from '../../globals';
 import {send404Page} from '../../pages/404.page';
-import {getMarketOrderPageText} from '../../pages/market-order/market-order.page';
-import {getBestRoute} from '../../utils/best-route.utils';
-import {getInputOutputAssets, saveLastPage} from '../../utils/ui-state.utils';
-import {getWallet} from '../../utils/wallet.utils';
+import {getSwapHistoryDataText} from '../../pages/swap-history-data.page';
+import {getInputOutputAssets} from '../asset.utils';
+import {getBestRoute} from '../best-route.utils';
+import {saveLastPage} from '../ui-state.utils';
+import {getWallet} from '../wallet.utils';
 
 export const createMarketOrder = async (chatId: number) => {
     await LITE_CLIENT.updateLastBlock();
@@ -28,10 +30,9 @@ export const createMarketOrder = async (chatId: number) => {
         marketOrder: undefined
     });
 
-    const wallet = await getWallet(chatId);
-    const {inputAsset, outputAsset} = await getInputOutputAssets(
-        chatId,
-        uiState.marketOrder.side
+    const {inputAsset, outputAsset} = getInputOutputAssets(
+        uiState.marketOrder.side,
+        uiState.selectedToken
     );
     const bestRoute = await getBestRoute(
         chatId,
@@ -44,12 +45,13 @@ export const createMarketOrder = async (chatId: number) => {
         return send404Page(chatId);
     }
 
+    const wallet = await getWallet(chatId);
     const transferBoc = await wallet.createTransferBoc(bestRoute.swapMessages);
     const bocHash = await wallet.sendBoc(transferBoc);
 
     const newMessage = await BOT.sendMessage(
         chatId,
-        getMarketOrderPageText(
+        getSwapHistoryDataText(
             {
                 timestamp: Date.now(),
                 bocHash,
@@ -67,6 +69,7 @@ export const createMarketOrder = async (chatId: number) => {
     await saveLastPage(chatId);
 
     await RedisOrderHistoryService.addPendingTransaction({
+        type: OrderType.Market,
         bocHash,
         chatId,
         messageId: newMessage.message_id,

@@ -2,7 +2,7 @@ import {isDefined} from '@rnw-community/shared';
 
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {LITE_CLIENT} from '../../globals';
-import {processOrderSellPercentAmount} from '../../orders/utils/sell-percent-input.utils';
+import {processOrderSellPercentAmount} from '../../utils/order-utils/sell-percent-input.utils';
 import {send404Page} from '../404.page';
 import {sendErrorPage} from '../error.page';
 
