@@ -12,9 +12,10 @@ import {
     MarketPendingTransaction
 } from '../interfaces/pending-transaction.interface';
 import {getSwapHistoryDataText} from '../pages/swap-history-data.page';
-import {sleep} from '../utils/promise.utils';
+import {promiseAllByChunks, sleep} from '../utils/promise.utils';
 
 const UPDATE_INTERVAL = 3 * 1000;
+const PARALLEL_REQUESTS_LIMIT = 5;
 
 export const checkPendingTransactions = async () => {
     // eslint-disable-next-line no-constant-condition
@@ -24,8 +25,9 @@ export const checkPendingTransactions = async () => {
         const pendingTransactions =
             await RedisOrderHistoryService.getPendingTransactions();
 
-        await Promise.all(
-            pendingTransactions.map(async pendingTransaction => {
+        await promiseAllByChunks(
+            PARALLEL_REQUESTS_LIMIT,
+            pendingTransactions.map(pendingTransaction => async () => {
                 const historyData = await getSwapHistoryData({
                     bocHash: pendingTransaction.bocHash
                 });

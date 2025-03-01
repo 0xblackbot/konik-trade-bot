@@ -8,7 +8,7 @@ import {LITE_CLIENT} from '../globals';
 import {getInputOutputAssets} from '../utils/asset.utils';
 import {getBestRoute} from '../utils/best-route.utils';
 import {cancelLimitOrderWithError} from '../utils/order-utils/limit-order.utils';
-import {sleep} from '../utils/promise.utils';
+import {promiseAllByChunks, sleep} from '../utils/promise.utils';
 import {
     getGasValidationError,
     getInputAssetAmountValidationError
@@ -16,6 +16,7 @@ import {
 import {getWallet} from '../utils/wallet.utils';
 
 const UPDATE_INTERVAL = 15 * 1000;
+const PARALLEL_REQUESTS_LIMIT = 5;
 
 export const checkLimitOrders = async () => {
     // eslint-disable-next-line no-constant-condition
@@ -29,8 +30,9 @@ export const checkLimitOrders = async () => {
                 orders.filter(value => value.status === LimitOrderStatus.Active)
             );
 
-        await Promise.all(
-            activeLimitOrders.map(async limitOrder => {
+        await promiseAllByChunks(
+            PARALLEL_REQUESTS_LIMIT,
+            activeLimitOrders.map(limitOrder => async () => {
                 const inputAssetAmount = BigInt(limitOrder.inputAssetAmount);
                 const {inputAsset, outputAsset} = getInputOutputAssets(
                     limitOrder.side,
