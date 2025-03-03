@@ -1,4 +1,4 @@
-import {Asset} from 'rainbow-swap-sdk/dist/types/asset.type';
+import {Asset} from 'rainbow-swap-sdk';
 
 import {LimitOrderStatus} from '../enums/limit-order-status.enum';
 import {OrderSide} from '../enums/order-side.enum';

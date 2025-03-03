@@ -68,12 +68,17 @@ const getHomePageMessageText = async (chatId: number) => {
         tonNetWorth += tonValue;
         usdNetWorth += usdValue;
 
+        const pnlLink =
+            balance !== 0
+                ? `<a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.PNL}${info.address}">PNL</a>`
+                : '';
+
         if (info.address === 'ton') {
             tonBalance = balance;
             usdTonBalance = usdValue;
         } else {
             tokensInfo.push(
-                ` - <b>${info.symbol}</b> <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.PNL}${info.address}">PNL</a>\n` +
+                ` - <b>${info.symbol}</b> ${pnlLink}\n` +
                     `  Value: <b>$${formatOutputNumber(usdValue)}</b> / <b>${formatOutputNumber(tonValue)}</b> TON\n`
             );
         }

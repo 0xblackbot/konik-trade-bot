@@ -1,5 +1,8 @@
-import {getSwapHistoryData, SwapStatusEnum} from 'rainbow-swap-sdk';
-import {SwapHistoryData} from 'rainbow-swap-sdk/dist/interfaces/swap-history-data.interface';
+import {
+    getSwapHistoryData,
+    SwapStatusEnum,
+    SwapHistoryData
+} from 'rainbow-swap-sdk';
 
 import {RedisLimitOrdersService} from '../classes/redis-limit-orders.service';
 import {RedisOrderHistoryService} from '../classes/redis-orders-history.service';

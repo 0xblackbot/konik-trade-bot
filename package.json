@@ -17,9 +17,10 @@
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.2.1",
     "axios": "^1.7.9",
+    "canvas": "^3.1.0",
     "ioredis": "^5.5.0",
     "node-telegram-bot-api": "^0.66.0",
-    "rainbow-swap-sdk": "^1.5.5",
+    "rainbow-swap-sdk": "^1.5.6",
     "ton-lite-client": "^3.0.0"
   },
   "devDependencies": {

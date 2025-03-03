@@ -1,5 +1,4 @@
-import {SwapStatusEnum} from 'rainbow-swap-sdk';
-import {SwapHistoryData} from 'rainbow-swap-sdk/dist/interfaces/swap-history-data.interface';
+import {SwapStatusEnum, SwapHistoryData} from 'rainbow-swap-sdk';
 
 import {formatOutputNumber} from '../utils/format.utils';
 import {clamp} from '../utils/number.utils';
