@@ -2,8 +2,8 @@ import {isDefined} from '@rnw-community/shared';
 
 import {BOT} from '../globals';
 import {send404Page} from './404.page';
+import {TELEGRAM_BOT_USERNAME} from '../secrets';
 import {getPnlCard, getPnlInfo} from '../utils/pnl.utils';
-import {TELEGRAM_BOT_USERNAME} from "../secrets";
 
 export const sendPnlPage = async (chatId: number, assetAddress: string) => {
     const pnlInfo = await getPnlInfo(chatId, assetAddress);
@@ -18,7 +18,7 @@ export const sendPnlPage = async (chatId: number, assetAddress: string) => {
         chatId,
         pnlCard,
         {
-            caption: `@${TELEGRAM_BOT_USERNAME} - trading on TON`,
+            caption: `@${TELEGRAM_BOT_USERNAME} - trading on TON`
         },
         {filename: 'konik_pnl_card.png', contentType: 'image/png'}
     );

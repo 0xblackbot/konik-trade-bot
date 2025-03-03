@@ -27,6 +27,12 @@ export const sendSettingsPage = async (chatId: number) => {
                     ],
                     [
                         {
+                            text: 'Withdraw TON',
+                            callback_data: CallbackDataType.WithdrawTON
+                        }
+                    ],
+                    [
+                        {
                             text: 'Change Max Slippage',
                             callback_data: CallbackDataType.ChangeMaxSlippage
                         }

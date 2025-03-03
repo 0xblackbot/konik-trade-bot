@@ -6,6 +6,8 @@ import {buyAmountInputHandler} from '../pages/inputs/buy-amount-input.handler';
 import {limitOrderTargetPriceHandler} from '../pages/inputs/limit-order-target-price.handler';
 import {maxSlippageInputHandler} from '../pages/inputs/max-slippage-input.handler';
 import {sellPercentInputHandler} from '../pages/inputs/sell-percent-input.handler';
+import {withdrawTonAddressInputHandler} from '../pages/inputs/withdraw-ton-address-input.handler';
+import {withdrawTonAmountInputHandler} from '../pages/inputs/withdraw-ton-amount-input.handler';
 
 export const messageReplyHandler: TelegramEvents['message'] = async message => {
     const uiState = await RedisUiStateService.getUiState(message.chat.id);
@@ -37,6 +39,14 @@ export const messageReplyHandler: TelegramEvents['message'] = async message => {
 
         if (uiState.inputRequestType === InputTypeEnum.LimitOrderTargetPrice) {
             return limitOrderTargetPriceHandler(message.chat.id, messageText);
+        }
+
+        if (uiState.inputRequestType === InputTypeEnum.WithdrawTonAddress) {
+            return withdrawTonAddressInputHandler(message.chat.id, messageText);
+        }
+
+        if (uiState.inputRequestType === InputTypeEnum.WithdrawTonAmount) {
+            return withdrawTonAmountInputHandler(message.chat.id, messageText);
         }
     }
 };

@@ -9,6 +9,7 @@ import {sendBuyAmountInputPage} from '../pages/inputs/buy-amount-input.page';
 import {sendLimitOrderTargetPricePage} from '../pages/inputs/limit-order-target-price.page';
 import {sendMaxSlippageInputPage} from '../pages/inputs/max-slippage-input.page';
 import {sendSellPercentInputPage} from '../pages/inputs/sell-percent-input.page';
+import {sendWithdrawTonAddressInputPage} from '../pages/inputs/withdraw-ton-address-input.page';
 import {sendLimitOrderCanceledPage} from '../pages/limit-order/limit-order-canceled.page';
 import {sendLimitOrderConfirmationConfirmPage} from '../pages/limit-order/limit-order-confirmation-confirm.page';
 import {sendLimitOrderInputAmountPage} from '../pages/limit-order/limit-order-input-amount.page';
@@ -142,6 +143,10 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] =
 
             if (query.data === CallbackDataType.ExportSeedPhrase) {
                 return sendSeepPhraseWarning(chatId);
+            }
+
+            if (query.data === CallbackDataType.WithdrawTON) {
+                return sendWithdrawTonAddressInputPage(chatId);
             }
 
             if (query.data === CallbackDataType.RefreshHome) {

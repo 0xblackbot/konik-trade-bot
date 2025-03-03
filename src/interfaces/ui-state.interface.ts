@@ -26,4 +26,7 @@ export interface UiState {
         targetOutputAssetAmount?: number;
         targetPrice?: number;
     };
+    withdrawRequest?: {
+        recipientAddress?: string;
+    };
 }

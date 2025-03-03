@@ -4,6 +4,7 @@ export enum CallbackDataType {
     LimitOrders = 'LimitOrders',
     Settings = 'Settings',
     ExportSeedPhrase = 'ExportSeedPhrase',
+    WithdrawTON = 'WithdrawTON',
     ChangeMaxSlippage = 'ChangeMaxSlippage',
     Help = 'Help',
     RefreshHome = 'RefreshHome',
