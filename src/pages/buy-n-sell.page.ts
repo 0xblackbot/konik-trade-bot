@@ -21,11 +21,12 @@ export const sendBuySellPage = async (chatId: number) => {
                   assetsInfos
                       .map(
                           asset =>
-                              ` - ${asset.symbol} <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.TokenPage}${asset.address}">Open</a>>`
+                              ` - ${asset.symbol} <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.TokenPage}${asset.address}">Open</a>`
                       )
                       .join('\n')),
         {
-            parse_mode: 'HTML'
+            parse_mode: 'HTML',
+            disable_web_page_preview: true
         }
     );
 };
