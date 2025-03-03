@@ -3,6 +3,7 @@ import {ParamsTypeEnum} from '../enums/params-type.enum';
 import {BOT} from '../globals';
 import {TELEGRAM_BOT_USERNAME} from '../secrets';
 import {getAssetsList} from '../utils/api.utils';
+import {CLOSE_BUTTON} from './buttons/close.button';
 
 export const sendBuySellPage = async (chatId: number) => {
     const userAssets = await RedisUserAssetsService.getUserAssets(chatId);
@@ -26,7 +27,10 @@ export const sendBuySellPage = async (chatId: number) => {
                       .join('\n')),
         {
             parse_mode: 'HTML',
-            disable_web_page_preview: true
+            disable_web_page_preview: true,
+            reply_markup: {
+                inline_keyboard: [CLOSE_BUTTON]
+            }
         }
     );
 };
