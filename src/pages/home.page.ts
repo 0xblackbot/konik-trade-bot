@@ -2,7 +2,9 @@ import {CallbackQuery} from 'node-telegram-bot-api';
 
 import {RedisUserAssetsService} from '../classes/redis-user-assets.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
+import {ParamsTypeEnum} from '../enums/params-type.enum';
 import {BOT, LITE_CLIENT, TON} from '../globals';
+import {TELEGRAM_BOT_USERNAME} from '../secrets';
 import {getAssetsList} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
@@ -14,11 +16,7 @@ export const updateHomePage = async (chatId: number, query: CallbackQuery) => {
         chat_id: chatId,
         message_id: query.message?.message_id,
         ...homePageOptions
-    }).catch(error => {
-        console.log('BOT.editMessageText error', error);
-
-        return BOT.answerCallbackQuery(query.id);
-    });
+    }).catch(() => BOT.answerCallbackQuery(query.id));
 };
 
 export const sendHomePage = async (chatId: number) =>
@@ -75,7 +73,7 @@ const getHomePageMessageText = async (chatId: number) => {
             usdTonBalance = usdValue;
         } else {
             tokensInfo.push(
-                ` - <b>${info.symbol}</b>\n` +
+                ` - <b>${info.symbol}</b> <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.PNL}${info.address}">PNL</a>\n` +
                     `  Value: <b>$${formatOutputNumber(usdValue)}</b> / <b>${formatOutputNumber(tonValue)}</b> TON\n`
             );
         }

@@ -5,6 +5,7 @@ import {
     getLimitOrderKey,
     RedisLimitOrdersService
 } from '../../classes/redis-limit-orders.service';
+import {RedisUserAssetsService} from '../../classes/redis-user-assets.service';
 import {LimitOrderStatus} from '../../enums/limit-order-status.enum';
 import {OrderSide} from '../../enums/order-side.enum';
 import {BOT} from '../../globals';
@@ -91,4 +92,10 @@ export const addUserLimitOrder = async (
 
     await RedisLimitOrdersService.setLimitOrder(orderWithId);
     await RedisLimitOrdersService.setUserLimitOrderKeys(chatId, newKeysArray);
+
+    await RedisUserAssetsService.addAssetTonSpentAmount(
+        chatId,
+        asset.address,
+        0
+    );
 };

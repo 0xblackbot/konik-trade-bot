@@ -12,6 +12,7 @@ import {
     MarketPendingTransaction
 } from '../interfaces/pending-transaction.interface';
 import {getSwapHistoryDataText} from '../pages/swap-history-data.page';
+import {getTonSpentAmount} from '../utils/pnl.utils';
 import {promiseAllByChunks, sleep} from '../utils/promise.utils';
 
 const UPDATE_INTERVAL = 3 * 1000;
@@ -38,9 +39,10 @@ export const checkPendingTransactions = async () => {
                         pendingTransaction
                     );
 
-                    await RedisUserAssetsService.addUserAsset(
+                    await RedisUserAssetsService.addAssetTonSpentAmount(
                         pendingTransaction.chatId,
-                        pendingTransaction.assetAddress
+                        pendingTransaction.assetAddress,
+                        getTonSpentAmount(historyData)
                     );
                 }
 

@@ -1,16 +1,27 @@
 import {TelegramEvents} from 'node-telegram-bot-api';
 
 import {CommandEnum} from '../enums/command.enum';
+import {ParamsTypeEnum} from '../enums/params-type.enum';
 import {BOT} from '../globals';
 import {sendChatPage} from '../pages/chat.page';
 import {sendHomePage} from '../pages/home.page';
+import {sendPnlPage} from '../pages/pnl.page';
 import {sendHelpPage} from '../pages/settings/help.page';
 import {sendSeepPhraseReveal} from '../pages/settings/seed-phrase-reveal.page';
 import {sendSettingsPage} from '../pages/settings/settings.page';
 import {sendTokenPage} from '../pages/token.page';
 
 export const messageHandler: TelegramEvents['message'] = async message => {
-    const command = message.text?.split(' ')[0];
+    const [command, params] = (message.text ?? '').split(' ') as [
+        string,
+        string | undefined
+    ];
+
+    if (params?.startsWith(ParamsTypeEnum.PNL)) {
+        const assetAddress = params.slice(ParamsTypeEnum.PNL.length);
+
+        return sendPnlPage(message, assetAddress);
+    }
 
     if (command === CommandEnum.Start || command === CommandEnum.Home) {
         return sendHomePage(message.chat.id);
