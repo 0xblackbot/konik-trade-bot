@@ -10,6 +10,7 @@ import {sendHelpPage} from '../pages/settings/help.page';
 import {sendSeepPhraseReveal} from '../pages/settings/seed-phrase-reveal.page';
 import {sendSettingsPage} from '../pages/settings/settings.page';
 import {sendTokenPage} from '../pages/token.page';
+import {deleteMessageSafe} from '../utils/bot.utils';
 
 export const messageHandler: TelegramEvents['message'] = async message => {
     const [command, params] = (message.text ?? '').split(' ') as [
@@ -18,9 +19,17 @@ export const messageHandler: TelegramEvents['message'] = async message => {
     ];
 
     if (params?.startsWith(ParamsTypeEnum.PNL)) {
+        await deleteMessageSafe(message.chat.id, message.message_id);
         const assetAddress = params.slice(ParamsTypeEnum.PNL.length);
 
-        return sendPnlPage(message, assetAddress);
+        return sendPnlPage(message.chat.id, assetAddress);
+    }
+
+    if (params?.startsWith(ParamsTypeEnum.TokenPage)) {
+        await deleteMessageSafe(message.chat.id, message.message_id);
+        const messageText = params.slice(ParamsTypeEnum.TokenPage.length);
+
+        return sendTokenPage(message.chat.id, messageText);
     }
 
     if (command === CommandEnum.Start || command === CommandEnum.Home) {
@@ -50,5 +59,5 @@ export const messageHandler: TelegramEvents['message'] = async message => {
         );
     }
 
-    return sendTokenPage(message);
+    return sendTokenPage(message.chat.id, message.text);
 };

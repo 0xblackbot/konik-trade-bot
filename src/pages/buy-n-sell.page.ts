@@ -1,5 +1,7 @@
 import {RedisUserAssetsService} from '../classes/redis-user-assets.service';
+import {ParamsTypeEnum} from '../enums/params-type.enum';
 import {BOT} from '../globals';
+import {TELEGRAM_BOT_USERNAME} from '../secrets';
 import {getAssetsList} from '../utils/api.utils';
 
 export const sendBuySellPage = async (chatId: number) => {
@@ -19,7 +21,7 @@ export const sendBuySellPage = async (chatId: number) => {
                   assetsInfos
                       .map(
                           asset =>
-                              ` - ${asset.symbol} <code>${asset.address}</code>`
+                              ` - ${asset.symbol} <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.TokenPage}${asset.address}">Open</a>>`
                       )
                       .join('\n')),
         {
