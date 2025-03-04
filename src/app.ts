@@ -9,6 +9,8 @@ const bot = new TelegramBot(TELEGRAM_BOT_API_TOKEN, {polling: true});
 
 bot.on('message', async (message, metadata) => {
     try {
+        console.log('message', message);
+
         if (message.chat.type === 'private') {
             if (message.reply_to_message) {
                 await messageReplyHandler(message, metadata);
@@ -23,6 +25,8 @@ bot.on('message', async (message, metadata) => {
 
 bot.on('callback_query', async query => {
     try {
+        console.log('callback_query', query);
+
         await callbackQueryHandler(query);
     } catch (error) {
         console.log('Error while handling callback_query', query, error);
