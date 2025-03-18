@@ -19,11 +19,11 @@ export const sendBuySellPage = async (chatId: number) => {
             (assetsInfos.length === 0
                 ? ''
                 : '\n' +
-                  'Your tokens:\n' +
+                  'Your tokens (tap to open):\n' +
                   assetsInfos
                       .map(
                           asset =>
-                              ` - ${asset.symbol} <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.TokenPage}${asset.address}">Open</a>`
+                              ` - <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.TokenPage}${asset.address}">${asset.symbol}</a>`
                       )
                       .join('\n')),
         {

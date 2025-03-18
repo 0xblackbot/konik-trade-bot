@@ -4,7 +4,7 @@ import {LiteClient} from './classes/lite-client.class';
 import {HETZNER_LITESERVER_CONFIG, TELEGRAM_BOT_API_TOKEN} from './secrets';
 import {createRedisClient} from './utils/redis.utils';
 
-export const TON = 'TON';
+export const TON = 'ton';
 
 export const BOT = new TelegramBot(TELEGRAM_BOT_API_TOKEN, {polling: false});
 

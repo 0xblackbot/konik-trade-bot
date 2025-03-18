@@ -6,7 +6,8 @@ import {TELEGRAM_BOT_USERNAME} from '../secrets';
 import {getAssetsList} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
-import {formatOutputNumber} from '../utils/format.utils';
+import {formatFDV, formatOutputNumber} from '../utils/format.utils';
+import {getPnlInfo} from '../utils/pnl.utils';
 import {saveHomePage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
 
@@ -82,18 +83,19 @@ const getHomePageMessageText = async (chatId: number) => {
         tonNetWorth += tonValue;
         usdNetWorth += usdValue;
 
-        const pnlLink =
-            balance !== 0
-                ? `<a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.PNL}${info.address}">PNL</a>`
-                : '';
+        console.log(assetAddress);
 
-        if (info.address === 'ton') {
+        if (info.address === TON) {
             tonBalance = balance;
             usdTonBalance = usdValue;
         } else {
+            const pnlText = await getPnlText(chatId, info.address, nanoBalance);
+
             tokensInfo.push(
-                ` - <b>${info.symbol}</b> ${pnlLink}\n` +
-                    `  Value: <b>$${formatOutputNumber(usdValue)}</b> / <b>${formatOutputNumber(tonValue)}</b> TON\n`
+                `- <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.TokenPage}${info.address}"><b>${info.symbol}</b></a>\n` +
+                    pnlText +
+                    `  Value: <b>$${formatOutputNumber(usdValue)}</b> / <b>${formatOutputNumber(tonValue)} TON</b>\n` +
+                    `  FDV: <b>$${formatFDV(info.fdv)}</b> @ <b>$${formatOutputNumber(info.usdExchangeRate)}</b>\n`
             );
         }
     }
@@ -123,6 +125,22 @@ const getHomePageMessageText = async (chatId: number) => {
         'To buy a token, simply enter its address.\n' +
         'To manage your wallet or export your seed phrase, tap Settings below.'
     );
+};
+
+const getPnlText = async (
+    chatId: number,
+    assetAddress: string,
+    assetBalance: bigint
+) => {
+    const pnlInfo = await getPnlInfo(chatId, assetAddress, assetBalance);
+
+    if (!pnlInfo) {
+        return '';
+    }
+
+    const diff = pnlInfo.currentTonValue - pnlInfo.tonSpentAmount;
+
+    return `  Profit: <b>${formatOutputNumber(pnlInfo.pnl)}%</b> / <b>${formatOutputNumber(diff)} TON</b> / <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.PNL}${assetAddress}">PNL Card</a>\n`;
 };
 
 const homePageOptions = {

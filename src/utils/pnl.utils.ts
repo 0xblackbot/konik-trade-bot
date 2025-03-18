@@ -2,11 +2,9 @@ import {createCanvas, loadImage} from 'canvas';
 import * as path from 'node:path';
 import {SwapHistoryData} from 'rainbow-swap-sdk';
 
-import {LITE_CLIENT, TON} from '../globals';
-import {getAssetBalance} from './asset.utils';
+import {TON} from '../globals';
 import {getBestRoute} from './best-route.utils';
 import {formatOutputNumber} from './format.utils';
-import {getWallet} from './wallet.utils';
 import {RedisUserAssetsService} from '../classes/redis-user-assets.service';
 import {PnlInfo} from '../interfaces/pnl-info.interface';
 
@@ -22,10 +20,11 @@ export const getTonSpentAmount = (historyData: SwapHistoryData) => {
     return 0;
 };
 
-export const getPnlInfo = async (chatId: number, assetAddress: string) => {
-    await LITE_CLIENT.updateLastBlock();
-
-    const wallet = await getWallet(chatId);
+export const getPnlInfo = async (
+    chatId: number,
+    assetAddress: string,
+    assetBalance: bigint
+) => {
     const spentRecord =
         await RedisUserAssetsService.getUserTonSpentAmountRecord(chatId);
     const tonSpentAmount = spentRecord[assetAddress] ?? 0;
@@ -34,7 +33,6 @@ export const getPnlInfo = async (chatId: number, assetAddress: string) => {
         return undefined;
     }
 
-    const assetBalance = await getAssetBalance(assetAddress, wallet.address);
     const bestRoute = await getBestRoute(
         chatId,
         assetBalance,

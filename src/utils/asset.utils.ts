@@ -26,7 +26,9 @@ const tonAsset: Asset = {
     decimals: 9,
     verification: 'whitelist',
     exchangeRate: '0',
-    usdExchangeRate: 0
+    usdExchangeRate: 0,
+    totalSupply: '0',
+    fdv: 0
 };
 
 export const getInputOutputAssets = (
