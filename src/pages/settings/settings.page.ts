@@ -37,7 +37,7 @@ export const sendSettingsPage = async (chatId: number) => {
                             callback_data: CallbackDataType.ChangeMaxSlippage
                         }
                     ],
-                    CLOSE_BUTTON
+                    [CLOSE_BUTTON]
                 ]
             }
         }

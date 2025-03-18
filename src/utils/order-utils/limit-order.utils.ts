@@ -46,7 +46,7 @@ export const cancelLimitOrderWithError = async (
         {
             parse_mode: 'HTML',
             reply_markup: {
-                inline_keyboard: [CLOSE_BUTTON]
+                inline_keyboard: [[CLOSE_BUTTON]]
             }
         }
     );

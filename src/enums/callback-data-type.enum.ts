@@ -8,6 +8,7 @@ export enum CallbackDataType {
     ChangeMaxSlippage = 'ChangeMaxSlippage',
     Help = 'Help',
     RefreshHome = 'RefreshHome',
+    RefreshToken = 'RefreshToken_',
     Close = 'Close',
 
     MarketBuy = 'MarketBuy_',

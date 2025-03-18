@@ -20,7 +20,7 @@ export const sendHelpPage = (chatId: number) =>
         {
             parse_mode: 'Markdown',
             reply_markup: {
-                inline_keyboard: [CLOSE_BUTTON]
+                inline_keyboard: [[CLOSE_BUTTON]]
             }
         }
     );

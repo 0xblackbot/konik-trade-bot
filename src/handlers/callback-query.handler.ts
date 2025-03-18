@@ -19,6 +19,7 @@ import {sendMarketOrderCanceledPage} from '../pages/market-order/market-order-ca
 import {sendHelpPage} from '../pages/settings/help.page';
 import {sendSeepPhraseWarning} from '../pages/settings/seed-phrase-warning.page';
 import {sendSettingsPage} from '../pages/settings/settings.page';
+import {updateTokenPage} from '../pages/token.page';
 import {sendUnavailablePage} from '../pages/unavailable.page';
 import {toNano} from '../utils/balance.utils';
 import {deleteMessageSafe} from '../utils/bot.utils';
@@ -151,6 +152,14 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] =
 
             if (query.data === CallbackDataType.RefreshHome) {
                 return updateHomePage(chatId, query);
+            }
+
+            if (query.data?.startsWith(CallbackDataType.RefreshToken)) {
+                const rawTokenAddress = query.data.slice(
+                    CallbackDataType.RefreshToken.length
+                );
+
+                return updateTokenPage(chatId, query, rawTokenAddress);
             }
 
             if (query.data === CallbackDataType.ChangeMaxSlippage) {

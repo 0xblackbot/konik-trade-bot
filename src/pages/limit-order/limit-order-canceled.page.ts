@@ -17,7 +17,7 @@ export const sendLimitOrderCanceledPage = async (chatId: number) => {
         {
             parse_mode: 'HTML',
             reply_markup: {
-                inline_keyboard: [CLOSE_BUTTON]
+                inline_keyboard: [[CLOSE_BUTTON]]
             }
         }
     );

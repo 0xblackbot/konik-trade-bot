@@ -29,7 +29,7 @@ export const sendBuySellPage = async (chatId: number) => {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
             reply_markup: {
-                inline_keyboard: [CLOSE_BUTTON]
+                inline_keyboard: [[CLOSE_BUTTON]]
             }
         }
     );

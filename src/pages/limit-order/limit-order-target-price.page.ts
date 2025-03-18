@@ -113,7 +113,7 @@ export const sendLimitOrderTargetPricePage = async (
                                           CallbackDataType.LimitOrderTargetPrice
                                   }
                               ],
-                              CLOSE_BUTTON
+                              [CLOSE_BUTTON]
                           ]
                         : [
                               [
@@ -157,7 +157,7 @@ export const sendLimitOrderTargetPricePage = async (
                                           CallbackDataType.LimitOrderTargetPrice
                                   }
                               ],
-                              CLOSE_BUTTON
+                              [CLOSE_BUTTON]
                           ]
             }
         }

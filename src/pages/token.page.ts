@@ -1,4 +1,5 @@
 import {Address} from '@ton/core';
+import {CallbackQuery} from 'node-telegram-bot-api';
 import {Asset} from 'rainbow-swap-sdk';
 
 import {RedisUiStateService} from '../classes/redis-ui-state.service';
@@ -13,6 +14,20 @@ import {saveTokenPage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
 import {CLOSE_BUTTON} from './buttons/close.button';
 
+export const updateTokenPage = async (
+    chatId: number,
+    query: CallbackQuery,
+    rawTokenAddress: string
+) =>
+    BOT.editMessageText(
+        await getTokenPageMessageText(chatId, rawTokenAddress),
+        {
+            chat_id: chatId,
+            message_id: query.message?.message_id,
+            ...getTokenPageOptions(rawTokenAddress)
+        }
+    ).catch(() => BOT.answerCallbackQuery(query.id));
+
 export const sendTokenPage = async (chatId: number, messageText: string = '') =>
     sendTokenPageInfo(chatId, messageText).catch(error => {
         console.log('error while sendTokenPageInfo', error);
@@ -24,8 +39,21 @@ export const sendTokenPage = async (chatId: number, messageText: string = '') =>
         );
     });
 
-const sendTokenPageInfo = async (chatId: number, messageText: string) => {
-    const tokenAddress = Address.parse(messageText).toRawString();
+const sendTokenPageInfo = async (chatId: number, rawTokenAddress: string) => {
+    const newMessage = await BOT.sendMessage(
+        chatId,
+        await getTokenPageMessageText(chatId, rawTokenAddress),
+        getTokenPageOptions(rawTokenAddress)
+    );
+
+    await saveTokenPage(chatId, newMessage);
+};
+
+const getTokenPageMessageText = async (
+    chatId: number,
+    rawTokenAddress: string
+) => {
+    const tokenAddress = Address.parse(rawTokenAddress).toRawString();
 
     const asset = await getAsset(tokenAddress);
 
@@ -59,68 +87,20 @@ const sendTokenPageInfo = async (chatId: number, messageText: string) => {
         selectedToken: asset
     });
 
-    const newMessage = await BOT.sendMessage(
-        chatId,
+    return (
         `<b>${asset.symbol}</b> - ${asset.name} - <code>${asset.address}</code>\n` +
-            '\n' +
-            `<a href="${displayData.explorerLink}">Explorer</a> | <a href="${displayData.chartLink}">Chart</a>\n` +
-            '\n' +
-            `<b>Prices:</b>\n` +
-            `${displayData.prices}\n` +
-            '\n' +
-            '<b>Wallet balances:</b>\n' +
-            `  ${displayData.tonBalance} TON\n` +
-            `  ${displayData.assetBalance} ${asset.symbol}\n` +
-            '\n' +
-            'To <b>instantly</b> buy or sell, press one of the buttons below, or create a limit order.',
-        {
-            parse_mode: 'HTML',
-            disable_web_page_preview: true,
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        {
-                            text: 'Buy 10 TON',
-                            callback_data: CallbackDataType.MarketBuy + 10
-                        },
-                        {
-                            text: 'Sell 50%',
-                            callback_data: CallbackDataType.MarketSell + 50
-                        }
-                    ],
-                    [
-                        {
-                            text: 'Buy 100 TON',
-                            callback_data: CallbackDataType.MarketBuy + 100
-                        },
-                        {
-                            text: 'Sell 100%',
-                            callback_data: CallbackDataType.MarketSell + 100
-                        }
-                    ],
-                    [
-                        {
-                            text: 'Buy X TON',
-                            callback_data: CallbackDataType.MarketBuy + 'X'
-                        },
-                        {
-                            text: 'Sell X %',
-                            callback_data: CallbackDataType.MarketSell + 'X'
-                        }
-                    ],
-                    [
-                        {
-                            text: 'Create Limit Order',
-                            callback_data: CallbackDataType.CreateLimitOrder
-                        }
-                    ],
-                    CLOSE_BUTTON
-                ]
-            }
-        }
+        '\n' +
+        `<a href="${displayData.explorerLink}">Explorer</a> | <a href="${displayData.chartLink}">Chart</a>\n` +
+        '\n' +
+        `<b>Prices:</b>\n` +
+        `${displayData.prices}\n` +
+        '\n' +
+        '<b>Wallet balances:</b>\n' +
+        `  ${displayData.tonBalance} TON\n` +
+        `  ${displayData.assetBalance} ${asset.symbol}\n` +
+        '\n' +
+        'To <b>instantly</b> buy or sell, press one of the buttons below, or create a limit order.'
     );
-
-    await saveTokenPage(chatId, newMessage);
 };
 
 const getPricesDisplayData = (asset: Asset) => {
@@ -142,3 +122,55 @@ const getPricesDisplayData = (asset: Asset) => {
         )} ${asset.symbol}`
     );
 };
+
+const getTokenPageOptions = (rawTokenAddress: string) => ({
+    parse_mode: 'HTML' as const,
+    disable_web_page_preview: true,
+    reply_markup: {
+        inline_keyboard: [
+            [
+                {
+                    text: 'Buy 10 TON',
+                    callback_data: CallbackDataType.MarketBuy + 10
+                },
+                {
+                    text: 'Sell 50%',
+                    callback_data: CallbackDataType.MarketSell + 50
+                }
+            ],
+            [
+                {
+                    text: 'Buy 100 TON',
+                    callback_data: CallbackDataType.MarketBuy + 100
+                },
+                {
+                    text: 'Sell 100%',
+                    callback_data: CallbackDataType.MarketSell + 100
+                }
+            ],
+            [
+                {
+                    text: 'Buy X TON',
+                    callback_data: CallbackDataType.MarketBuy + 'X'
+                },
+                {
+                    text: 'Sell X %',
+                    callback_data: CallbackDataType.MarketSell + 'X'
+                }
+            ],
+            [
+                {
+                    text: 'Create Limit Order',
+                    callback_data: CallbackDataType.CreateLimitOrder
+                }
+            ],
+            [
+                {
+                    text: '🔄 Refresh',
+                    callback_data: `${CallbackDataType.RefreshToken}${rawTokenAddress}`
+                },
+                CLOSE_BUTTON
+            ]
+        ]
+    }
+});

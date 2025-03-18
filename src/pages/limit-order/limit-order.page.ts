@@ -58,7 +58,7 @@ export const sendLimitOrderPage = async (chatId: number, orderId: string) => {
                         callback_data: `${CallbackDataType.CancelLimitOrder}${order.id}`
                     }
                 ],
-                CLOSE_BUTTON
+                [CLOSE_BUTTON]
             ]
         }
     });

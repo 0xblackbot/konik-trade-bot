@@ -11,13 +11,12 @@ import {fromNano} from '../utils/balance.utils';
 import {formatOutputNumber} from '../utils/format.utils';
 import {getWallet} from '../utils/wallet.utils';
 
-export const updateHomePage = async (chatId: number, query: CallbackQuery) => {
+export const updateHomePage = async (chatId: number, query: CallbackQuery) =>
     BOT.editMessageText(await getHomePageMessageText(chatId), {
         chat_id: chatId,
         message_id: query.message?.message_id,
         ...homePageOptions
     }).catch(() => BOT.answerCallbackQuery(query.id));
-};
 
 export const sendHomePage = async (chatId: number) =>
     BOT.sendMessage(
@@ -100,7 +99,7 @@ const getHomePageMessageText = async (chatId: number) => {
     const secondPart =
         tokensInfo.length === 0
             ? ''
-            : 'Your tokens:\n' + tokensInfo.join('\n') + '\n';
+            : 'Your positions:\n' + tokensInfo.join('\n') + '\n';
 
     return (
         firstPart +
@@ -139,7 +138,7 @@ const homePageOptions = {
                 },
                 {text: 'Help', callback_data: CallbackDataType.Help}
             ],
-            [{text: 'Refresh', callback_data: CallbackDataType.RefreshHome}]
+            [{text: '🔄 Refresh', callback_data: CallbackDataType.RefreshHome}]
         ]
     }
 };

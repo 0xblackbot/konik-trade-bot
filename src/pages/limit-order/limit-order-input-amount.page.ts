@@ -57,7 +57,7 @@ export const sendLimitOrderInputAmountPage = async (chatId: number) => {
                             callback_data: CallbackDataType.LimitSell + 'X'
                         }
                     ],
-                    CLOSE_BUTTON
+                    [CLOSE_BUTTON]
                 ]
             }
         }

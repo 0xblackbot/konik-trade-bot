@@ -44,7 +44,7 @@ export const sendLimitOrdersPage = async (chatId: number) => {
                             return [{text, callback_data}];
                         }
                     }),
-                    CLOSE_BUTTON
+                    [CLOSE_BUTTON]
                 ]
             }
         }
