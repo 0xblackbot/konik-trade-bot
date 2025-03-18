@@ -10,6 +10,7 @@ import {formatOutputNumber} from '../../utils/format.utils';
 import {saveLastPage} from '../../utils/ui-state.utils';
 import {send404Page} from '../404.page';
 import {CLOSE_BUTTON} from '../buttons/close.button';
+import {HOME_BUTTON} from '../buttons/home.button';
 
 export const getLimitOrderText = (order: LimitOrder) => {
     if (order.side === OrderSide.Buy) {
@@ -38,7 +39,11 @@ export const getLimitOrderText = (order: LimitOrder) => {
     }
 };
 
-export const sendLimitOrderPage = async (chatId: number, orderId: string) => {
+export const sendLimitOrderPage = async (
+    chatId: number,
+    orderId: string,
+    textPrefix: string = ''
+) => {
     const key = `${chatId}_${orderId}`;
     const order = await RedisLimitOrdersService.getLimitOrder(key);
 
@@ -48,7 +53,7 @@ export const sendLimitOrderPage = async (chatId: number, orderId: string) => {
 
     const text = getLimitOrderText(order);
 
-    const newMessage = await BOT.sendMessage(chatId, text, {
+    const newMessage = await BOT.sendMessage(chatId, textPrefix + text, {
         parse_mode: 'HTML',
         reply_markup: {
             inline_keyboard: [
@@ -58,7 +63,7 @@ export const sendLimitOrderPage = async (chatId: number, orderId: string) => {
                         callback_data: `${CallbackDataType.CancelLimitOrder}${order.id}`
                     }
                 ],
-                [CLOSE_BUTTON]
+                [HOME_BUTTON, CLOSE_BUTTON]
             ]
         }
     });

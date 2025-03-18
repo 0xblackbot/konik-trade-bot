@@ -4,7 +4,7 @@ import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {OrderSide} from '../enums/order-side.enum';
 import {OrderType} from '../enums/order-type.enum';
 import {sendBuySellPage} from '../pages/buy-n-sell.page';
-import {updateHomePage} from '../pages/home.page';
+import {sendHomePage, updateHomePage} from '../pages/home.page';
 import {sendBuyAmountInputPage} from '../pages/inputs/buy-amount-input.page';
 import {sendLimitOrderTargetPricePage} from '../pages/inputs/limit-order-target-price.page';
 import {sendMaxSlippageInputPage} from '../pages/inputs/max-slippage-input.page';
@@ -34,6 +34,10 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] =
     async query => {
         if (query.message) {
             const chatId = query.message.chat.id;
+
+            if (query.data === CallbackDataType.Home) {
+                return sendHomePage(chatId);
+            }
 
             if (query.data === CallbackDataType.Help) {
                 return sendHelpPage(chatId);
@@ -151,7 +155,11 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] =
             }
 
             if (query.data === CallbackDataType.RefreshHome) {
-                return updateHomePage(chatId, query);
+                return updateHomePage(
+                    chatId,
+                    query.message?.message_id,
+                    query.id
+                );
             }
 
             if (query.data?.startsWith(CallbackDataType.RefreshToken)) {

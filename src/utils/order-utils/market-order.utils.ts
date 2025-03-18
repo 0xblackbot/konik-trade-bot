@@ -7,10 +7,10 @@ import {OrderSide} from '../../enums/order-side.enum';
 import {OrderType} from '../../enums/order-type.enum';
 import {BOT, LITE_CLIENT} from '../../globals';
 import {send404Page} from '../../pages/404.page';
+import {sendHomePage} from '../../pages/home.page';
 import {getSwapHistoryDataText} from '../../pages/swap-history-data.page';
 import {getInputOutputAssets} from '../asset.utils';
 import {getBestRoute} from '../best-route.utils';
-import {saveLastPage} from '../ui-state.utils';
 import {getWallet} from '../wallet.utils';
 
 export const createMarketOrder = async (chatId: number) => {
@@ -66,8 +66,6 @@ export const createMarketOrder = async (chatId: number) => {
         }
     );
 
-    await saveLastPage(chatId);
-
     await RedisOrderHistoryService.addPendingTransaction({
         type: OrderType.Market,
         bocHash,
@@ -79,4 +77,6 @@ export const createMarketOrder = async (chatId: number) => {
                 ? outputAsset.address
                 : inputAsset.address
     });
+
+    await sendHomePage(chatId);
 };

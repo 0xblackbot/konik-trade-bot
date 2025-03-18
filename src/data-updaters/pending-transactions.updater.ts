@@ -6,6 +6,7 @@ import {
 
 import {RedisLimitOrdersService} from '../classes/redis-limit-orders.service';
 import {RedisOrderHistoryService} from '../classes/redis-orders-history.service';
+import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {RedisUserAssetsService} from '../classes/redis-user-assets.service';
 import {LimitOrderStatus} from '../enums/limit-order-status.enum';
 import {OrderType} from '../enums/order-type.enum';
@@ -14,6 +15,7 @@ import {
     LimitPendingTransaction,
     MarketPendingTransaction
 } from '../interfaces/pending-transaction.interface';
+import {updateHomePage} from '../pages/home.page';
 import {getSwapHistoryDataText} from '../pages/swap-history-data.page';
 import {getTonSpentAmount} from '../utils/pnl.utils';
 import {promiseAllByChunks, sleep} from '../utils/promise.utils';
@@ -46,6 +48,15 @@ export const checkPendingTransactions = async () => {
                         pendingTransaction.chatId,
                         pendingTransaction.assetAddress,
                         getTonSpentAmount(historyData)
+                    );
+
+                    // update Home page tokens
+                    const uiState = await RedisUiStateService.getUiState(
+                        pendingTransaction.chatId
+                    );
+                    await updateHomePage(
+                        pendingTransaction.chatId,
+                        uiState.messageIds?.homePage
                     );
                 }
 

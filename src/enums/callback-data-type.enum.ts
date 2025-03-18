@@ -1,4 +1,5 @@
 export enum CallbackDataType {
+    Home = 'Home',
     BuyAndSell = 'BuyAndSell',
     DCAOrders = 'DCAOrders',
     LimitOrders = 'LimitOrders',

@@ -78,6 +78,7 @@ const HEIGHT = 580;
 export const getPnlCard = async (pnlInfo: PnlInfo) => {
     const isPositive = pnlInfo.pnl >= 0;
 
+    const pnlWithoutSign = isPositive ? pnlInfo.pnl : -1 * pnlInfo.pnl;
     const pnlSign = isPositive ? '+' : '-';
     const pnlColor = isPositive ? '#2ec183' : '#ff3a59';
     const bgImages = isPositive ? BG_IMAGES.profit : BG_IMAGES.loss;
@@ -106,7 +107,7 @@ export const getPnlCard = async (pnlInfo: PnlInfo) => {
 
     ctx.font = 'bold 96px Helvetica';
     ctx.fillStyle = pnlColor;
-    ctx.fillText(`${pnlSign} ${formatOutputNumber(pnlInfo.pnl)}%`, 106, 177);
+    ctx.fillText(`${pnlSign} ${formatOutputNumber(pnlWithoutSign)}%`, 106, 177);
 
     return canvas.toBuffer('image/png');
 };

@@ -5,6 +5,31 @@ import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../enums/input-type.enum';
 import {OrderType} from '../enums/order-type.enum';
 
+export const saveHomePage = async (chatId: number, newMessage: Message) => {
+    const uiState = await RedisUiStateService.getUiState(chatId);
+
+    /** clear all previous messages */
+    await Promise.all([
+        deleteMessageSafe(chatId, uiState.messageIds?.homePage),
+        deleteMessageSafe(chatId, uiState.messageIds?.tokenPage),
+        deleteMessageSafe(chatId, uiState.messageIds?.lastPage),
+        deleteMessageSafe(chatId, uiState.messageIds?.inputPage)
+    ]);
+
+    /** update ui state */
+    await RedisUiStateService.setUiState(chatId, {
+        ...uiState,
+        messageIds: {
+            homePage: newMessage.message_id,
+            tokenPage: undefined,
+            lastPage: undefined,
+            inputPage: undefined
+        },
+        inputRequestType: undefined,
+        limitOrder: undefined
+    });
+};
+
 export const saveTokenPage = async (chatId: number, newMessage: Message) => {
     const uiState = await RedisUiStateService.getUiState(chatId);
 
@@ -19,6 +44,7 @@ export const saveTokenPage = async (chatId: number, newMessage: Message) => {
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
         messageIds: {
+            homePage: uiState.messageIds?.homePage,
             tokenPage: newMessage.message_id,
             lastPage: undefined,
             inputPage: undefined
@@ -41,6 +67,7 @@ export const saveLastPage = async (chatId: number, newMessage?: Message) => {
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
         messageIds: {
+            homePage: uiState.messageIds?.homePage,
             tokenPage: uiState.messageIds?.tokenPage,
             lastPage: newMessage?.message_id,
             inputPage: undefined
@@ -62,6 +89,7 @@ export const saveInputPage = async (
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
         messageIds: {
+            homePage: uiState.messageIds?.homePage,
             tokenPage: uiState.messageIds?.tokenPage,
             lastPage: uiState.messageIds?.lastPage,
             inputPage: newMessage.message_id

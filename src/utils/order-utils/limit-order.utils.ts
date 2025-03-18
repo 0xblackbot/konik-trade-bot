@@ -11,6 +11,7 @@ import {OrderSide} from '../../enums/order-side.enum';
 import {BOT} from '../../globals';
 import {LimitOrder} from '../../interfaces/limit-order.interface';
 import {CLOSE_BUTTON} from '../../pages/buttons/close.button';
+import {HOME_BUTTON} from '../../pages/buttons/home.button';
 import {sendLimitOrderCanceledPage} from '../../pages/limit-order/limit-order-canceled.page';
 import {getLimitOrderText} from '../../pages/limit-order/limit-order.page';
 
@@ -46,7 +47,7 @@ export const cancelLimitOrderWithError = async (
         {
             parse_mode: 'HTML',
             reply_markup: {
-                inline_keyboard: [[CLOSE_BUTTON]]
+                inline_keyboard: [[HOME_BUTTON], [CLOSE_BUTTON]]
             }
         }
     );
@@ -98,4 +99,6 @@ export const addUserLimitOrder = async (
         asset.address,
         0
     );
+
+    return orderWithId;
 };

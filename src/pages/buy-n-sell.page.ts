@@ -4,6 +4,7 @@ import {BOT} from '../globals';
 import {TELEGRAM_BOT_USERNAME} from '../secrets';
 import {getAssetsList} from '../utils/api.utils';
 import {CLOSE_BUTTON} from './buttons/close.button';
+import {saveLastPage} from '../utils/ui-state.utils';
 
 export const sendBuySellPage = async (chatId: number) => {
     const userAssets = await RedisUserAssetsService.getUserAssets(chatId);
@@ -12,7 +13,7 @@ export const sendBuySellPage = async (chatId: number) => {
         limit: 0
     });
 
-    return BOT.sendMessage(
+    const newMessage = await BOT.sendMessage(
         chatId,
         'To buy or sell a token, simply enter its address.\n' +
             (assetsInfos.length === 0
@@ -33,4 +34,6 @@ export const sendBuySellPage = async (chatId: number) => {
             }
         }
     );
+
+    await saveLastPage(chatId, newMessage);
 };

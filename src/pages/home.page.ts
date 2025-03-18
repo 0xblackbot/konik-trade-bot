@@ -1,5 +1,3 @@
-import {CallbackQuery} from 'node-telegram-bot-api';
-
 import {RedisUserAssetsService} from '../classes/redis-user-assets.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {ParamsTypeEnum} from '../enums/params-type.enum';
@@ -9,21 +7,33 @@ import {getAssetsList} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
 import {formatOutputNumber} from '../utils/format.utils';
+import {saveHomePage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
 
-export const updateHomePage = async (chatId: number, query: CallbackQuery) =>
+export const updateHomePage = async (
+    chatId: number,
+    messageId?: number,
+    queryId?: string
+) =>
     BOT.editMessageText(await getHomePageMessageText(chatId), {
         chat_id: chatId,
-        message_id: query.message?.message_id,
+        message_id: messageId,
         ...homePageOptions
-    }).catch(() => BOT.answerCallbackQuery(query.id));
+    }).catch(() => {
+        if (queryId) {
+            return BOT.answerCallbackQuery(queryId);
+        }
+    });
 
-export const sendHomePage = async (chatId: number) =>
-    BOT.sendMessage(
+export const sendHomePage = async (chatId: number) => {
+    const newMessage = await BOT.sendMessage(
         chatId,
         await getHomePageMessageText(chatId),
         homePageOptions
     );
+
+    await saveHomePage(chatId, newMessage);
+};
 
 const getHomePageMessageText = async (chatId: number) => {
     await LITE_CLIENT.updateLastBlock();
@@ -52,7 +62,12 @@ const getHomePageMessageText = async (chatId: number) => {
 
     for (let i = 0; i < assetsBalances.length; i++) {
         const nanoBalance = assetsBalances[i];
-        const info = assetsInfos[i];
+        const assetAddress = userAssets[i];
+        const info = assetsInfos.find(item => item.address === assetAddress);
+
+        if (!info) {
+            continue;
+        }
 
         const balance = fromNano(nanoBalance, info.decimals);
         const usdValue = balance * info.usdExchangeRate;
