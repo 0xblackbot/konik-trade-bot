@@ -9,10 +9,11 @@ import {sendErrorPage} from './error.page';
 import {getAsset} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
-import {formatOutputNumber} from '../utils/format.utils';
+import {formatFDV, formatOutputNumber} from '../utils/format.utils';
 import {saveTokenPage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
 import {CLOSE_BUTTON} from './buttons/close.button';
+import {getPnlText} from './home.page';
 
 export const updateTokenPage = async (
     chatId: number,
@@ -65,18 +66,23 @@ const getTokenPageMessageText = async (
 
     await LITE_CLIENT.updateLastBlock();
 
-    const [tonBalance, assetBalance] = await Promise.all([
+    const [tonBalance, assetNanoBalance] = await Promise.all([
         getAssetBalance(TON, wallet.address),
         getAssetBalance(asset.address, wallet.address)
     ]);
+
+    const assetBalance = fromNano(assetNanoBalance, asset.decimals);
 
     const displayData = {
         explorerLink: `https://tonviewer.com/${asset.address}`,
         chartLink: `https://dexscreener.com/ton/${asset.address}`,
         prices: getPricesDisplayData(asset),
         tonBalance: formatOutputNumber(fromNano(tonBalance, 9)),
-        assetBalance: formatOutputNumber(fromNano(assetBalance, asset.decimals))
+        assetBalance: formatOutputNumber(assetBalance)
     };
+
+    const pnlText = await getPnlText(chatId, asset.address, assetNanoBalance);
+    const valueText = getValueText(assetBalance, asset);
 
     /** save the last selected token to be able to create order */
     const uiState = await RedisUiStateService.getUiState(chatId);
@@ -92,12 +98,17 @@ const getTokenPageMessageText = async (
         '\n' +
         `<a href="${displayData.explorerLink}">Explorer</a> | <a href="${displayData.chartLink}">Chart</a>\n` +
         '\n' +
-        `<b>Prices:</b>\n` +
-        `${displayData.prices}\n` +
-        '\n' +
         '<b>Wallet balances:</b>\n' +
         `  ${displayData.tonBalance} TON\n` +
         `  ${displayData.assetBalance} ${asset.symbol}\n` +
+        '\n' +
+        '<b>Info:</b>\n' +
+        pnlText +
+        valueText +
+        `  FDV: <b>$${formatFDV(asset.fdv)}</b> @ <b>$${formatOutputNumber(asset.usdExchangeRate)}</b>\n` +
+        '\n' +
+        `<b>Prices:</b>\n` +
+        `${displayData.prices}\n` +
         '\n' +
         'To <b>instantly</b> buy or sell, press one of the buttons below, or create a limit order.'
     );
@@ -121,6 +132,22 @@ const getPricesDisplayData = (asset: Asset) => {
             tonToAssetExchangeRate
         )} ${asset.symbol}`
     );
+};
+
+const getValueText = (assetBalance: number, asset: Asset) => {
+    if (assetBalance === 0) {
+        return '';
+    }
+
+    const usdValue = assetBalance * asset.usdExchangeRate;
+
+    const tonToAssetExchangeRate = fromNano(
+        BigInt(asset.exchangeRate),
+        asset.decimals
+    );
+    const assetTonValue = assetBalance / tonToAssetExchangeRate;
+
+    return `  Value: <b>$${formatOutputNumber(usdValue)}</b> / <b>${formatOutputNumber(assetTonValue)} TON</b>\n`;
 };
 
 const getTokenPageOptions = (rawTokenAddress: string) => ({

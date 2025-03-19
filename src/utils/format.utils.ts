@@ -17,3 +17,9 @@ export const formatFDV = (fdv: number) => {
 
     return fdv.toString();
 };
+
+export const formatPriceImpact = (priceImpact: number) => {
+    const sign = priceImpact < 0 ? '' : '+';
+
+    return sign + formatOutputNumber(priceImpact) + '%';
+};

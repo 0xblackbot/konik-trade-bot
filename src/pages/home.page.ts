@@ -45,15 +45,17 @@ const getHomePageMessageText = async (chatId: number) => {
     const assetAddresses = await RedisUserAssetsService.getUserAssets(chatId);
     const userAssets = [TON, ...assetAddresses];
 
-    const assetsInfos = await getAssetsList({
-        userAssets,
-        limit: 0
-    });
-    const assetsBalances = await Promise.all(
-        userAssets.map(assetAddress =>
-            getAssetBalance(assetAddress, wallet.address)
+    const [assetsInfos, assetsBalances] = await Promise.all([
+        getAssetsList({
+            userAssets,
+            limit: 0
+        }),
+        Promise.all(
+            userAssets.map(assetAddress =>
+                getAssetBalance(assetAddress, wallet.address)
+            )
         )
-    );
+    ]);
 
     let tonBalance = 0;
     let usdTonBalance = 0;
@@ -82,8 +84,6 @@ const getHomePageMessageText = async (chatId: number) => {
 
         tonNetWorth += tonValue;
         usdNetWorth += usdValue;
-
-        console.log(assetAddress);
 
         if (info.address === TON) {
             tonBalance = balance;
@@ -127,7 +127,7 @@ const getHomePageMessageText = async (chatId: number) => {
     );
 };
 
-const getPnlText = async (
+export const getPnlText = async (
     chatId: number,
     assetAddress: string,
     assetBalance: bigint
