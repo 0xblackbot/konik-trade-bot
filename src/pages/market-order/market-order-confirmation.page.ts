@@ -7,7 +7,7 @@ import {OrderSide} from '../../enums/order-side.enum';
 import {BOT, LITE_CLIENT} from '../../globals';
 import {getInputOutputAssets} from '../../utils/asset.utils';
 import {getBestRoute} from '../../utils/best-route.utils';
-import {formatOutputNumber} from '../../utils/format.utils';
+import {formatOutputNumber, formatPriceImpact} from '../../utils/format.utils';
 import {saveLastPage} from '../../utils/ui-state.utils';
 import {getGasValidationError} from '../../utils/validation.utils';
 import {send404Page} from '../404.page';
@@ -57,6 +57,7 @@ export const sendMarketOrderConfirmationPage = async (
         `<b>Market Order</b>\n` +
             `\n` +
             `Details: <b>${formatOutputNumber(bestRoute.displayData.inputAssetAmount)} ${inputAsset.symbol} to ${formatOutputNumber(bestRoute.displayData.outputAssetAmount)} ${outputAsset.symbol}</b>\n` +
+            `Price impact: <b>${formatPriceImpact(bestRoute.displayData.priceImpact)}</b>\n` +
             `\n` +
             `Max slippage: <b>${formatOutputNumber(settings.maxSlippage)}%</b>\n` +
             `Gas fee: <b>~${formatOutputNumber(bestRoute.displayData.roughGasFee)} TON ($${formatOutputNumber(bestRoute.displayData.roughGasUsdFee)})</b>\n`,
