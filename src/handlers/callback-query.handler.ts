@@ -3,12 +3,17 @@ import {TelegramEvents} from 'node-telegram-bot-api';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {OrderSide} from '../enums/order-side.enum';
 import {OrderType} from '../enums/order-type.enum';
+import {BOT} from '../globals';
 import {sendBuySellPage} from '../pages/buy-n-sell.page';
 import {sendHomePage, updateHomePage} from '../pages/home.page';
 import {sendBuyAmountInputPage} from '../pages/inputs/buy-amount-input.page';
+import {sendBuyBottomAmountInputPage} from '../pages/inputs/buy-bottom-amount-input.page';
+import {sendBuyTopAmountInputPage} from '../pages/inputs/buy-top-amount-input.page';
 import {sendLimitOrderTargetPricePage} from '../pages/inputs/limit-order-target-price.page';
 import {sendMaxSlippageInputPage} from '../pages/inputs/max-slippage-input.page';
+import {sendSellBottomAmountInputPage} from '../pages/inputs/sell-bottom-percent-input.page';
 import {sendSellPercentInputPage} from '../pages/inputs/sell-percent-input.page';
+import {sendSellTopAmountInputPage} from '../pages/inputs/sell-top-percent-input.page';
 import {sendWithdrawTonAddressInputPage} from '../pages/inputs/withdraw-ton-address-input.page';
 import {sendLimitOrderCanceledPage} from '../pages/limit-order/limit-order-canceled.page';
 import {sendLimitOrderConfirmationConfirmPage} from '../pages/limit-order/limit-order-confirmation-confirm.page';
@@ -170,8 +175,28 @@ export const callbackQueryHandler: TelegramEvents['callback_query'] =
                 return updateTokenPage(chatId, query, rawTokenAddress);
             }
 
+            if (query.data === CallbackDataType.Nothing) {
+                return BOT.answerCallbackQuery(query.id);
+            }
+
             if (query.data === CallbackDataType.ChangeMaxSlippage) {
                 return sendMaxSlippageInputPage(chatId);
+            }
+
+            if (query.data === CallbackDataType.ChangeBuyTop) {
+                return sendBuyTopAmountInputPage(chatId);
+            }
+
+            if (query.data === CallbackDataType.ChangeBuyBottom) {
+                return sendBuyBottomAmountInputPage(chatId);
+            }
+
+            if (query.data === CallbackDataType.ChangeSellTop) {
+                return sendSellTopAmountInputPage(chatId);
+            }
+
+            if (query.data === CallbackDataType.ChangeSellBottom) {
+                return sendSellBottomAmountInputPage(chatId);
             }
 
             if (query.data === CallbackDataType.CreateLimitOrder) {

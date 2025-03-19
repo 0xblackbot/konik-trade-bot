@@ -3,9 +3,13 @@ import {TelegramEvents} from 'node-telegram-bot-api';
 import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {InputTypeEnum} from '../enums/input-type.enum';
 import {buyAmountInputHandler} from '../pages/inputs/buy-amount-input.handler';
+import {buyBottomAmountInputHandler} from '../pages/inputs/buy-bottom-amount-input.handler';
+import {buyTopAmountInputHandler} from '../pages/inputs/buy-top-amount-input.handler';
 import {limitOrderTargetPriceHandler} from '../pages/inputs/limit-order-target-price.handler';
 import {maxSlippageInputHandler} from '../pages/inputs/max-slippage-input.handler';
+import {sellBottomPercentInputHandler} from '../pages/inputs/sell-bottom-percent-input.handler';
 import {sellPercentInputHandler} from '../pages/inputs/sell-percent-input.handler';
+import {sellTopPercentInputHandler} from '../pages/inputs/sell-top-percent-input.handler';
 import {withdrawTonAddressInputHandler} from '../pages/inputs/withdraw-ton-address-input.handler';
 import {withdrawTonAmountInputHandler} from '../pages/inputs/withdraw-ton-amount-input.handler';
 
@@ -35,6 +39,22 @@ export const messageReplyHandler: TelegramEvents['message'] = async message => {
 
         if (uiState.inputRequestType === InputTypeEnum.MaxSlippage) {
             return maxSlippageInputHandler(message.chat.id, messageText);
+        }
+
+        if (uiState.inputRequestType === InputTypeEnum.BuyTopButtonAmount) {
+            return buyTopAmountInputHandler(message.chat.id, messageText);
+        }
+
+        if (uiState.inputRequestType === InputTypeEnum.BuyBottomButtonAmount) {
+            return buyBottomAmountInputHandler(message.chat.id, messageText);
+        }
+
+        if (uiState.inputRequestType === InputTypeEnum.SellTopButtonAmount) {
+            return sellTopPercentInputHandler(message.chat.id, messageText);
+        }
+
+        if (uiState.inputRequestType === InputTypeEnum.SellBottomButtonAmount) {
+            return sellBottomPercentInputHandler(message.chat.id, messageText);
         }
 
         if (uiState.inputRequestType === InputTypeEnum.LimitOrderTargetPrice) {

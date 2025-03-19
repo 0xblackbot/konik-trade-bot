@@ -4,5 +4,9 @@ export enum InputTypeEnum {
     MaxSlippage = 'MaxSlippage',
     LimitOrderTargetPrice = 'LimitOrderTargetPrice',
     WithdrawTonAddress = 'WithdrawTonAddress',
-    WithdrawTonAmount = 'WithdrawTonAmount'
+    WithdrawTonAmount = 'WithdrawTonAmount',
+    BuyTopButtonAmount = 'BuyTopButtonAmount',
+    BuyBottomButtonAmount = 'BuyBottomButtonAmount',
+    SellTopButtonAmount = 'SellTopButtonAmount',
+    SellBottomButtonAmount = 'SellBottomButtonAmount'
 }

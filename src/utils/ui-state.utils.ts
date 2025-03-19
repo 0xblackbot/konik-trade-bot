@@ -13,7 +13,8 @@ export const saveHomePage = async (chatId: number, newMessage: Message) => {
         deleteMessageSafe(chatId, uiState.messageIds?.homePage),
         deleteMessageSafe(chatId, uiState.messageIds?.tokenPage),
         deleteMessageSafe(chatId, uiState.messageIds?.lastPage),
-        deleteMessageSafe(chatId, uiState.messageIds?.inputPage)
+        deleteMessageSafe(chatId, uiState.messageIds?.inputPage),
+        deleteMessageSafe(chatId, uiState.messageIds?.settingsPage)
     ]);
 
     /** update ui state */
@@ -23,7 +24,8 @@ export const saveHomePage = async (chatId: number, newMessage: Message) => {
             homePage: newMessage.message_id,
             tokenPage: undefined,
             lastPage: undefined,
-            inputPage: undefined
+            inputPage: undefined,
+            settingsPage: undefined
         },
         inputRequestType: undefined,
         limitOrder: undefined
@@ -44,7 +46,7 @@ export const saveTokenPage = async (chatId: number, newMessage: Message) => {
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
         messageIds: {
-            homePage: uiState.messageIds?.homePage,
+            ...uiState.messageIds,
             tokenPage: newMessage.message_id,
             lastPage: undefined,
             inputPage: undefined
@@ -67,8 +69,7 @@ export const saveLastPage = async (chatId: number, newMessage?: Message) => {
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
         messageIds: {
-            homePage: uiState.messageIds?.homePage,
-            tokenPage: uiState.messageIds?.tokenPage,
+            ...uiState.messageIds,
             lastPage: newMessage?.message_id,
             inputPage: undefined
         },
@@ -89,12 +90,33 @@ export const saveInputPage = async (
     await RedisUiStateService.setUiState(chatId, {
         ...uiState,
         messageIds: {
-            homePage: uiState.messageIds?.homePage,
-            tokenPage: uiState.messageIds?.tokenPage,
-            lastPage: uiState.messageIds?.lastPage,
+            ...uiState.messageIds,
             inputPage: newMessage.message_id
         },
         inputRequestType: newType
+    });
+};
+
+export const saveSettingsPage = async (chatId: number, newMessage: Message) => {
+    const uiState = await RedisUiStateService.getUiState(chatId);
+
+    /** clear all previous messages */
+    await Promise.all([
+        deleteMessageSafe(chatId, uiState.messageIds?.tokenPage),
+        deleteMessageSafe(chatId, uiState.messageIds?.lastPage),
+        deleteMessageSafe(chatId, uiState.messageIds?.inputPage),
+        deleteMessageSafe(chatId, uiState.messageIds?.settingsPage)
+    ]);
+
+    await RedisUiStateService.setUiState(chatId, {
+        ...uiState,
+        messageIds: {
+            ...uiState.messageIds,
+            tokenPage: undefined,
+            lastPage: undefined,
+            inputPage: undefined,
+            settingsPage: newMessage.message_id
+        }
     });
 };
 

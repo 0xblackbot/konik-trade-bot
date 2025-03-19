@@ -1,6 +1,5 @@
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {OrderSide} from '../../enums/order-side.enum';
-import {LITE_CLIENT} from '../../globals';
 import {send404Page} from '../404.page';
 import {sendErrorPage} from '../error.page';
 import {sendLimitOrderConfirmationPage} from '../limit-order/limit-order-confirmation.page';
@@ -9,8 +8,6 @@ export const limitOrderTargetPriceHandler = async (
     chatId: number,
     messageText: string
 ) => {
-    await LITE_CLIENT.updateLastBlock();
-
     const targetPrice = parseFloat(messageText);
 
     if (isNaN(targetPrice)) {

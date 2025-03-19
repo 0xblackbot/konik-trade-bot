@@ -6,6 +6,7 @@ import {RedisUiStateService} from '../classes/redis-ui-state.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
 import {BOT, LITE_CLIENT, TON} from '../globals';
 import {sendErrorPage} from './error.page';
+import {RedisSettingsService} from '../classes/redis-settings.service';
 import {getAsset} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
@@ -14,20 +15,24 @@ import {saveTokenPage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
 import {CLOSE_BUTTON} from './buttons/close.button';
 import {getPnlText} from './home.page';
+import {Settings} from '../interfaces/settings.interface';
 
 export const updateTokenPage = async (
     chatId: number,
     query: CallbackQuery,
     rawTokenAddress: string
-) =>
-    BOT.editMessageText(
+) => {
+    const settings = await RedisSettingsService.getSettings(chatId);
+
+    return BOT.editMessageText(
         await getTokenPageMessageText(chatId, rawTokenAddress),
         {
             chat_id: chatId,
             message_id: query.message?.message_id,
-            ...getTokenPageOptions(rawTokenAddress)
+            ...getTokenPageOptions(rawTokenAddress, settings)
         }
     ).catch(() => BOT.answerCallbackQuery(query.id));
+};
 
 export const sendTokenPage = async (chatId: number, messageText: string = '') =>
     sendTokenPageInfo(chatId, messageText).catch(error => {
@@ -41,10 +46,12 @@ export const sendTokenPage = async (chatId: number, messageText: string = '') =>
     });
 
 const sendTokenPageInfo = async (chatId: number, rawTokenAddress: string) => {
+    const settings = await RedisSettingsService.getSettings(chatId);
+
     const newMessage = await BOT.sendMessage(
         chatId,
         await getTokenPageMessageText(chatId, rawTokenAddress),
-        getTokenPageOptions(rawTokenAddress)
+        getTokenPageOptions(rawTokenAddress, settings)
     );
 
     await saveTokenPage(chatId, newMessage);
@@ -150,29 +157,32 @@ const getValueText = (assetBalance: number, asset: Asset) => {
     return `  Value: <b>$${formatOutputNumber(usdValue)}</b> / <b>${formatOutputNumber(assetTonValue)} TON</b>\n`;
 };
 
-const getTokenPageOptions = (rawTokenAddress: string) => ({
+const getTokenPageOptions = (rawTokenAddress: string, settings: Settings) => ({
     parse_mode: 'HTML' as const,
     disable_web_page_preview: true,
     reply_markup: {
         inline_keyboard: [
             [
                 {
-                    text: 'Buy 10 TON',
-                    callback_data: CallbackDataType.MarketBuy + 10
+                    text: `Buy  ${formatOutputNumber(settings.buyTop, 0)} TON`,
+                    callback_data: CallbackDataType.MarketBuy + settings.buyTop
                 },
                 {
-                    text: 'Sell 50%',
-                    callback_data: CallbackDataType.MarketSell + 50
+                    text: `Sell ${formatOutputNumber(settings.sellTop, 0)}%`,
+                    callback_data:
+                        CallbackDataType.MarketSell + settings.sellTop
                 }
             ],
             [
                 {
-                    text: 'Buy 100 TON',
-                    callback_data: CallbackDataType.MarketBuy + 100
+                    text: `Buy ${formatOutputNumber(settings.buyBottom, 0)} TON`,
+                    callback_data:
+                        CallbackDataType.MarketBuy + settings.buyBottom
                 },
                 {
-                    text: 'Sell 100%',
-                    callback_data: CallbackDataType.MarketSell + 100
+                    text: `Sell ${formatOutputNumber(settings.sellBottom, 0)}%`,
+                    callback_data:
+                        CallbackDataType.MarketSell + settings.sellBottom
                 }
             ],
             [

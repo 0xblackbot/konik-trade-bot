@@ -1,13 +1,17 @@
-export const formatOutputNumber = (value: number) => {
+export const formatOutputNumber = (value: number, fractionDigits = 2) => {
     if (value === 0) {
-        return `0.00`;
+        return `${value.toFixed(fractionDigits)}`;
     }
 
     if (0.01 > value && value > -0.01) {
         return `${value.toFixed(6)}`;
     }
 
-    return `${value.toFixed(2)}`;
+    if (1 > value && value > -1) {
+        return `${value.toFixed(2)}`;
+    }
+
+    return `${value.toFixed(fractionDigits)}`;
 };
 
 export const formatFDV = (fdv: number) => {

@@ -1,14 +1,17 @@
 import {isDefined} from '@rnw-community/shared';
 
+import {RedisSettingsService} from '../../classes/redis-settings.service';
 import {RedisUiStateService} from '../../classes/redis-ui-state.service';
 import {CallbackDataType} from '../../enums/callback-data-type.enum';
 import {BOT} from '../../globals';
+import {formatOutputNumber} from '../../utils/format.utils';
 import {saveLastPage} from '../../utils/ui-state.utils';
 import {send404Page} from '../404.page';
 import {CLOSE_BUTTON} from '../buttons/close.button';
 
 export const sendLimitOrderInputAmountPage = async (chatId: number) => {
     const uiState = await RedisUiStateService.getUiState(chatId);
+    const settings = await RedisSettingsService.getSettings(chatId);
 
     if (!isDefined(uiState.selectedToken)) {
         return send404Page(chatId);
@@ -29,22 +32,26 @@ export const sendLimitOrderInputAmountPage = async (chatId: number) => {
                 inline_keyboard: [
                     [
                         {
-                            text: 'Buy 10 TON',
-                            callback_data: CallbackDataType.LimitBuy + 10
+                            text: `Buy ${formatOutputNumber(settings.buyTop, 0)} TON`,
+                            callback_data:
+                                CallbackDataType.LimitBuy + settings.buyTop
                         },
                         {
-                            text: 'Sell 50%',
-                            callback_data: CallbackDataType.LimitSell + 50
+                            text: `Sell ${formatOutputNumber(settings.sellTop, 0)}%`,
+                            callback_data:
+                                CallbackDataType.LimitSell + settings.sellTop
                         }
                     ],
                     [
                         {
-                            text: 'Buy 100 TON',
-                            callback_data: CallbackDataType.LimitBuy + 100
+                            text: `Buy ${formatOutputNumber(settings.buyBottom, 0)} TON`,
+                            callback_data:
+                                CallbackDataType.LimitBuy + settings.buyBottom
                         },
                         {
-                            text: 'Sell 100%',
-                            callback_data: CallbackDataType.LimitSell + 100
+                            text: `Sell ${formatOutputNumber(settings.sellBottom, 0)}%`,
+                            callback_data:
+                                CallbackDataType.LimitSell + settings.sellBottom
                         }
                     ],
                     [

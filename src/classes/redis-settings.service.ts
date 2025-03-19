@@ -4,7 +4,11 @@ import {REDIS_CLIENT} from '../globals';
 import {Settings} from '../interfaces/settings.interface';
 
 export const DEFAULT_SETTINGS: Settings = {
-    maxSlippage: 10
+    maxSlippage: 10,
+    buyTop: 10,
+    buyBottom: 100,
+    sellTop: 50,
+    sellBottom: 100
 };
 
 export abstract class RedisSettingsService {
@@ -19,7 +23,12 @@ export abstract class RedisSettingsService {
         );
 
         if (isDefined(serializedData)) {
-            return JSON.parse(serializedData) as Settings;
+            const value = JSON.parse(serializedData) as Settings;
+
+            return {
+                ...DEFAULT_SETTINGS,
+                ...value
+            };
         } else {
             return DEFAULT_SETTINGS;
         }

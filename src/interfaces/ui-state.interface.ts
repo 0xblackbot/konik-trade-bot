@@ -10,6 +10,7 @@ export interface UiState {
         tokenPage?: number;
         lastPage?: number; // any other (except token page) active page
         inputPage?: number;
+        settingsPage?: number;
     };
     selectedToken?: Asset;
     orderType?: OrderType;

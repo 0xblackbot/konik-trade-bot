@@ -3,7 +3,7 @@ import {BOT} from '../../globals';
 import {sendErrorPage} from '../error.page';
 import {updateSettingsPage} from '../settings/settings.page';
 
-export const maxSlippageInputHandler = async (
+export const buyTopAmountInputHandler = async (
     chatId: number,
     messageText: string
 ) => {
@@ -16,10 +16,10 @@ export const maxSlippageInputHandler = async (
         );
     }
 
-    if (inputValue < 0 || inputValue > 100) {
+    if (inputValue <= 0) {
         return sendErrorPage(
             chatId,
-            `Number out of range (0 - 100). Press button and try again.`
+            `Number should be <b>greater than 0</b>. Press button and try again.`
         );
     }
 
@@ -27,14 +27,14 @@ export const maxSlippageInputHandler = async (
 
     await RedisSettingsService.setSettings(chatId, {
         ...settings,
-        maxSlippage: inputValue
+        buyTop: inputValue
     });
 
     await updateSettingsPage(chatId);
 
     await BOT.sendMessage(
         chatId,
-        `Max slippage set to <b>${inputValue}%</b>.`,
+        `Top Buy Button set to <b>${inputValue} TON</b>.`,
         {parse_mode: 'HTML'}
     );
 };
