@@ -1,12 +1,11 @@
 import {RedisUserAssetsService} from '../classes/redis-user-assets.service';
 import {CallbackDataType} from '../enums/callback-data-type.enum';
-import {ParamsTypeEnum} from '../enums/params-type.enum';
 import {BOT, LITE_CLIENT, TON} from '../globals';
-import {TELEGRAM_BOT_USERNAME} from '../secrets';
 import {getAssetsList} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
 import {formatFDV, formatOutputNumber} from '../utils/format.utils';
+import {getPnlLink, getTokenPageLink} from '../utils/links.utils';
 import {getPnlInfo} from '../utils/pnl.utils';
 import {saveHomePage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
@@ -92,7 +91,7 @@ const getHomePageMessageText = async (chatId: number) => {
             const pnlText = await getPnlText(chatId, info.address, nanoBalance);
 
             tokensInfo.push(
-                `- <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.TokenPage}${info.address}"><b>${info.symbol}</b></a>\n` +
+                `- <a href="${getTokenPageLink(info.address)}"><b>${info.symbol}</b></a>\n` +
                     pnlText +
                     `  Value: <b>$${formatOutputNumber(usdValue)}</b> / <b>${formatOutputNumber(tonValue)} TON</b>\n` +
                     `  FDV: <b>$${formatFDV(info.fdv)}</b> @ <b>$${formatOutputNumber(info.usdExchangeRate)}</b>\n`
@@ -140,7 +139,7 @@ export const getPnlText = async (
 
     const diff = pnlInfo.currentTonValue - pnlInfo.tonSpentAmount;
 
-    return `  Profit: <b>${formatOutputNumber(pnlInfo.pnl)}%</b> / <b>${formatOutputNumber(diff)} TON</b> / <a href="https://t.me/${TELEGRAM_BOT_USERNAME}?start=${ParamsTypeEnum.PNL}${assetAddress}">PNL Card</a>\n`;
+    return `  Profit: <b>${formatOutputNumber(pnlInfo.pnl)}%</b> / <b>${formatOutputNumber(diff)} TON</b> / <a href="${getPnlLink(assetAddress)}">PNL Card</a>\n`;
 };
 
 const homePageOptions = {

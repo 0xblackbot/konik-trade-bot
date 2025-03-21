@@ -9,6 +9,7 @@ import {sendPnlPage} from '../pages/pnl.page';
 import {sendHelpPage} from '../pages/settings/help.page';
 import {sendSeepPhraseReveal} from '../pages/settings/seed-phrase-reveal.page';
 import {sendSettingsPage} from '../pages/settings/settings.page';
+import {sendShareTokenPage} from '../pages/share-token.page';
 import {sendTokenPage} from '../pages/token.page';
 import {deleteMessageSafe} from '../utils/bot.utils';
 
@@ -30,6 +31,13 @@ export const messageHandler: TelegramEvents['message'] = async message => {
         const messageText = params.slice(ParamsTypeEnum.TokenPage.length);
 
         return sendTokenPage(message.chat.id, messageText);
+    }
+
+    if (params?.startsWith(ParamsTypeEnum.ShareToken)) {
+        await deleteMessageSafe(message.chat.id, message.message_id);
+        const assetAddress = params.slice(ParamsTypeEnum.ShareToken.length);
+
+        return sendShareTokenPage(message.chat.id, assetAddress);
     }
 
     if (command === CommandEnum.Start || command === CommandEnum.Home) {

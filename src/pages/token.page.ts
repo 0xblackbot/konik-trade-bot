@@ -16,6 +16,7 @@ import {getWallet} from '../utils/wallet.utils';
 import {CLOSE_BUTTON} from './buttons/close.button';
 import {getPnlText} from './home.page';
 import {Settings} from '../interfaces/settings.interface';
+import {getShareTokenLink} from '../utils/links.utils';
 
 export const updateTokenPage = async (
     chatId: number,
@@ -103,7 +104,7 @@ const getTokenPageMessageText = async (
     return (
         `<b>${asset.symbol}</b> - ${asset.name} - <code>${asset.address}</code>\n` +
         '\n' +
-        `<a href="${displayData.explorerLink}">Explorer</a> | <a href="${displayData.chartLink}">Chart</a>\n` +
+        `<a href="${displayData.explorerLink}">Explorer</a> | <a href="${displayData.chartLink}">Chart</a> | <a href="${getShareTokenLink(asset.address)}">Share</a>\n` +
         '\n' +
         '<b>Wallet balances:</b>\n' +
         `  ${displayData.tonBalance} TON\n` +
@@ -117,7 +118,7 @@ const getTokenPageMessageText = async (
         `<b>Prices:</b>\n` +
         `${displayData.prices}\n` +
         '\n' +
-        'To <b>instantly</b> buy or sell, press one of the buttons below, or create a limit order.'
+        'To <b>instantly</b> buy or sell, press one of the buttons below, or create a limit order.\n'
     );
 };
 
