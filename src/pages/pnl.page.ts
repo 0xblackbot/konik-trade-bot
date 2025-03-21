@@ -6,6 +6,7 @@ import {TELEGRAM_BOT_USERNAME} from '../secrets';
 import {getAssetBalance} from '../utils/asset.utils';
 import {getPnlCard, getPnlInfo} from '../utils/pnl.utils';
 import {CLOSE_BUTTON} from './buttons/close.button';
+import {getTokenPageLink} from '../utils/links.utils';
 import {getWallet} from '../utils/wallet.utils';
 
 export const sendPnlPage = async (chatId: number, assetAddress: string) => {
@@ -25,7 +26,11 @@ export const sendPnlPage = async (chatId: number, assetAddress: string) => {
         chatId,
         pnlCard,
         {
-            caption: `@${TELEGRAM_BOT_USERNAME} - trading on TON`,
+            caption:
+                `Try trading <a href="${getTokenPageLink(assetAddress)}">${pnlInfo.ticker}</a> now.\n` +
+                `\n` +
+                `@${TELEGRAM_BOT_USERNAME} - easy trading on TON`,
+            parse_mode: 'HTML',
             reply_markup: {
                 inline_keyboard: [[CLOSE_BUTTON]]
             }
