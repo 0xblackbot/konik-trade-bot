@@ -17,6 +17,7 @@ import {CLOSE_BUTTON} from './buttons/close.button';
 import {getPnlText} from './home.page';
 import {Settings} from '../interfaces/settings.interface';
 import {getShareTokenLink} from '../utils/links.utils';
+import {HOME_BUTTON} from './buttons/home.button';
 
 export const updateTokenPage = async (
     chatId: number,
@@ -203,6 +204,7 @@ const getTokenPageOptions = (rawTokenAddress: string, settings: Settings) => ({
                 }
             ],
             [
+                HOME_BUTTON,
                 {
                     text: '🔄 Refresh',
                     callback_data: `${CallbackDataType.RefreshToken}${rawTokenAddress}`
