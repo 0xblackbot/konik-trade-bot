@@ -20,11 +20,13 @@
     "canvas": "^3.1.0",
     "ioredis": "^5.5.0",
     "node-telegram-bot-api": "^0.66.0",
+    "qs": "^6.14.0",
     "rainbow-swap-sdk": "^1.5.8",
     "ton-lite-client": "^3.0.0"
   },
   "devDependencies": {
     "@types/node-telegram-bot-api": "^0.64.7",
+    "@types/qs": "^6.9.18",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.1",

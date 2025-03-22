@@ -4,9 +4,14 @@ import {BOT, LITE_CLIENT, TON} from '../globals';
 import {getAssetsList} from '../utils/api.utils';
 import {getAssetBalance} from '../utils/asset.utils';
 import {fromNano} from '../utils/balance.utils';
-import {formatFDV, formatOutputNumber} from '../utils/format.utils';
+import {
+    formatFDV,
+    formatOutputNumber,
+    formatPriceImpact
+} from '../utils/format.utils';
 import {getPnlLink, getTokenPageLink} from '../utils/links.utils';
 import {getPnlInfo} from '../utils/pnl.utils';
+import {getAssetsStatisticsRecord, ShortStat} from '../utils/statistic.utils';
 import {saveHomePage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
 
@@ -44,7 +49,7 @@ const getHomePageMessageText = async (chatId: number) => {
     const assetAddresses = await RedisUserAssetsService.getUserAssets(chatId);
     const userAssets = [TON, ...assetAddresses];
 
-    const [assetsInfos, assetsBalances] = await Promise.all([
+    const [assetsInfos, assetsBalances, statisticsRecord] = await Promise.all([
         getAssetsList({
             userAssets,
             limit: 0
@@ -53,7 +58,8 @@ const getHomePageMessageText = async (chatId: number) => {
             userAssets.map(assetAddress =>
                 getAssetBalance(assetAddress, wallet.address)
             )
-        )
+        ),
+        getAssetsStatisticsRecord(assetAddresses)
     ]);
 
     let tonBalance = 0;
@@ -89,12 +95,14 @@ const getHomePageMessageText = async (chatId: number) => {
             usdTonBalance = usdValue;
         } else {
             const pnlText = await getPnlText(chatId, info.address, nanoBalance);
+            const statsText = getStatsText(statisticsRecord[assetAddress]);
 
             tokensInfo.push(
                 `- <a href="${getTokenPageLink(info.address)}"><b>${info.symbol}</b></a>\n` +
                     pnlText +
                     `  Value: <b>$${formatOutputNumber(usdValue)}</b> / <b>${formatOutputNumber(tonValue)} TON</b>\n` +
-                    `  FDV: <b>$${formatFDV(info.fdv)}</b> @ <b>$${formatOutputNumber(info.usdExchangeRate)}</b>\n`
+                    `  FDV: <b>$${formatFDV(info.fdv)}</b> @ <b>$${formatOutputNumber(info.usdExchangeRate)}</b>\n` +
+                    statsText
             );
         }
     }
@@ -140,6 +148,14 @@ export const getPnlText = async (
     const diff = pnlInfo.currentTonValue - pnlInfo.tonSpentAmount;
 
     return `  Profit: <b>${formatOutputNumber(pnlInfo.pnl)}%</b> / <b>${formatOutputNumber(diff)} TON</b> / <a href="${getPnlLink(assetAddress)}">PNL Card</a>\n`;
+};
+
+export const getStatsText = (stats: ShortStat | undefined) => {
+    if (!stats) {
+        return '';
+    }
+
+    return `  15m: <b>${formatPriceImpact(stats['15m'])}</b>, 1h: <b>${formatPriceImpact(stats['1h'])}</b>, 6h: <b>${formatPriceImpact(stats['6h'])}</b>, 24h: <b>${formatPriceImpact(stats['24h'])}</b>\n`;
 };
 
 const homePageOptions = {

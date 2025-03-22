@@ -14,10 +14,11 @@ import {formatFDV, formatOutputNumber} from '../utils/format.utils';
 import {saveTokenPage} from '../utils/ui-state.utils';
 import {getWallet} from '../utils/wallet.utils';
 import {CLOSE_BUTTON} from './buttons/close.button';
-import {getPnlText} from './home.page';
+import {getPnlText, getStatsText} from './home.page';
 import {Settings} from '../interfaces/settings.interface';
 import {getShareTokenLink} from '../utils/links.utils';
 import {HOME_BUTTON} from './buttons/home.button';
+import {getAssetsStatisticsRecord} from '../utils/statistic.utils';
 
 export const updateTokenPage = async (
     chatId: number,
@@ -75,9 +76,10 @@ const getTokenPageMessageText = async (
 
     await LITE_CLIENT.updateLastBlock();
 
-    const [tonBalance, assetNanoBalance] = await Promise.all([
+    const [tonBalance, assetNanoBalance, statisticsRecord] = await Promise.all([
         getAssetBalance(TON, wallet.address),
-        getAssetBalance(asset.address, wallet.address)
+        getAssetBalance(asset.address, wallet.address),
+        getAssetsStatisticsRecord([asset.address])
     ]);
 
     const assetBalance = fromNano(assetNanoBalance, asset.decimals);
@@ -92,6 +94,7 @@ const getTokenPageMessageText = async (
 
     const pnlText = await getPnlText(chatId, asset.address, assetNanoBalance);
     const valueText = getValueText(assetBalance, asset);
+    const statsText = getStatsText(statisticsRecord[asset.address]);
 
     /** save the last selected token to be able to create order */
     const uiState = await RedisUiStateService.getUiState(chatId);
@@ -115,6 +118,7 @@ const getTokenPageMessageText = async (
         pnlText +
         valueText +
         `  FDV: <b>$${formatFDV(asset.fdv)}</b> @ <b>$${formatOutputNumber(asset.usdExchangeRate)}</b>\n` +
+        statsText +
         '\n' +
         `<b>Prices:</b>\n` +
         `${displayData.prices}\n` +
