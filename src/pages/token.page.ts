@@ -34,7 +34,7 @@ export const updateTokenPage = async (
             message_id: query.message?.message_id,
             ...getTokenPageOptions(rawTokenAddress, settings)
         }
-    ).catch(() => BOT.answerCallbackQuery(query.id));
+    ).finally(() => BOT.answerCallbackQuery(query.id));
 };
 
 export const sendTokenPage = async (chatId: number, messageText: string = '') =>

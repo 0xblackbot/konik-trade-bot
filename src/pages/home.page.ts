@@ -24,7 +24,7 @@ export const updateHomePage = async (
         chat_id: chatId,
         message_id: messageId,
         ...homePageOptions
-    }).catch(() => {
+    }).finally(() => {
         if (queryId) {
             return BOT.answerCallbackQuery(queryId);
         }
