@@ -26,7 +26,7 @@ export const updateHomePage = async (
         ...homePageOptions
     }).finally(() => {
         if (queryId) {
-            return BOT.answerCallbackQuery(queryId, {text: 'Updated'});
+            return BOT.answerCallbackQuery(queryId);
         }
     });
 
